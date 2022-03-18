@@ -13,6 +13,8 @@ public class Control {
 		//Create an object of the GUI class.
 		SearchEngineGUI searchGUIObject = new SearchEngineGUI();
 
+		
+		
 	}
 
 }

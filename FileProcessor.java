@@ -9,14 +9,16 @@ public class FileProcessor {
 	
 	//Attributes
 	//
-	public String fileName;
+	public String fileName; //Store the name of the file.
+	String searchText; //Store the user's search terms.
 	File userFile;
 
 	//Constructor
 	//
-	public FileProcessor(String new_fileName)
+	public FileProcessor(String new_fileName, String new_searchText)
 	{
 		this.setFileName(new_fileName);
+		this.setSearchText(new_searchText);
 	}
 	
 	//Methods
@@ -28,12 +30,14 @@ public class FileProcessor {
 		//File userFile = new File(fileName);
 			
 	}
-		
+	
+	/*
 	//Read the file and compare the passed string to the text inside it.
 	//
 	public boolean compareFile(String passedRole)
 	{
 			
+		//Open the file.
 		File userFile = new File(fileName);
 		boolean roleMatch = false;
 		String currentLine = ""; 
@@ -85,6 +89,7 @@ public class FileProcessor {
 			System.out.println(roleMatch);
 			return roleMatch;
 		}
+		*/
 		
 	
 	//Getters and Setters
@@ -97,5 +102,14 @@ public class FileProcessor {
 		this.fileName = fileName;
 	}
 
+	public String getSearchText() {
+		return searchText;
+	}
+
+	public void setSearchText(String searchText) {
+		this.searchText = searchText;
+	}
+
+	
 	
 }

@@ -10,6 +10,7 @@ import java.util.Random;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -22,7 +23,7 @@ JLabel label1;
 	//String fileNameText;
 
 	//Button labels.
-	JButton button_1,button_2;
+	JButton searchButton,button_1;
 	
 	//Panel labels.
 	JPanel panel1;
@@ -61,16 +62,29 @@ JLabel label1;
 		button_1.setToolTipText("This is the first button, and show a message when clicked.");
 		button_1.addActionListener(this);
 		
-		//Create second button.
-		button_2= new JButton("Search.");
-		panel1.add(button_2);
+		
+		//Create Search button.
+		searchButton= new JButton("Search.");
+		panel1.add(searchButton);
 		//Add hover over text.
-		button_2.setToolTipText("This is the second button, it will show a different message."); 
-		button_2.addActionListener(this);
+		searchButton.setToolTipText("Search for your entered terms in the files."); 
+		searchButton.addActionListener(new ActionListener ()
+		{
+		
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+				//if(e.getSource()==searchButton)
+				{
+					JOptionPane.showMessageDialog(searchButton,"Search Clicked.");
+					fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+				}
+			}
+		});
+		
 		
 		//After clicking search button, If a correct filename is chosen && the search term is entered.
-		//Create object of FileProcessor and perform search there.
-		//So need to add logic here, but have to store inputs first.
+		//Search through file, or if no particular file is selected then search all of them.
 		
 		
 		//Create text field for entering filename.
@@ -83,9 +97,9 @@ JLabel label1;
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				String user_input = textfile_field.getText();
-				fProcessor.fileName = user_input;
-				System.out.print(fProcessor.getFileName());
+				JOptionPane.showMessageDialog(searchButton, "Search Clicked.");
+				//Call fProcessor.compareString
+				fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
 			}
 		});
 		
@@ -102,21 +116,25 @@ JLabel label1;
 			public void actionPerformed(ActionEvent e) 
 			{
 				String user_input = search_field.getText();
-				fProcessor.searchText = user_input;
+				fProcessor.setSearchText(user_input);
 				System.out.print(fProcessor.getSearchText());
 			}
 		});
 		
-	}
+	}//end Constructor
 	
 	
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub	
-	}
 	
 	public static void main(String[] args)
 	{
+		
+	}
+
+
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 	

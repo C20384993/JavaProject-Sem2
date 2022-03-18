@@ -9,8 +9,8 @@ public class FileProcessor {
 	
 	//Attributes
 	//
-	public String fileName; //Store the name of the file.
-	String searchText; //Store the user's search terms.
+	protected String fileName; //Store the name of the file.
+	protected String searchText; //Store the user's search terms.
 	File userFile;
 
 	//Constructor
@@ -31,12 +31,26 @@ public class FileProcessor {
 			
 	}
 	
-	/*
+	
 	//Read the file and compare the passed string to the text inside it.
+	//Check that a file was passed and a string was passed.
 	//
-	public boolean compareFile(String passedRole)
+	public boolean compareString(String passedFileName, String searchTerms)
 	{
+		//1.) Specific filename && search term, i.e. search through given file.
+		if(("Meaningful Work.txt").equals(fileName) || ("Rabies and Vaccines.txt").equals(fileName) || 
+		("Phone data and Machine Learning Humanitarian Aid.txt").equals(fileName) && searchTerms != null)
+		{
 			
+		}
+		
+		//2.) No specific filename && search term, i.e. search through every file.
+		else if(passedFileName != null && searchTerms != null)
+		{
+					
+		}
+
+
 		//Open the file.
 		File userFile = new File(fileName);
 		boolean roleMatch = false;
@@ -89,7 +103,7 @@ public class FileProcessor {
 			System.out.println(roleMatch);
 			return roleMatch;
 		}
-		*/
+
 		
 	
 	//Getters and Setters
@@ -98,8 +112,20 @@ public class FileProcessor {
 		return fileName;
 	}
 
+	//setFileName must check if the file name matches a file available.
 	public void setFileName(String fileName) {
-		this.fileName = fileName;
+		if(("Meaningful Work.txt").equals(fileName) || ("Rabies and Vaccines.txt").equals(fileName) || 
+		("Phone data and Machine Learning Humanitarian Aid.txt").equals(fileName)) 
+		{
+			this.fileName = fileName;
+		}
+		
+		else
+		{
+			System.out.println("Not matching filename.");
+			System.out.println(fileName);
+			this.fileName = null;
+		}
 	}
 
 	public String getSearchText() {

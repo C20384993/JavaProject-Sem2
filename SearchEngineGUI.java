@@ -16,12 +16,8 @@ import javax.swing.JTextField;
 
 public class SearchEngineGUI extends JFrame implements ActionListener{
 
-JLabel label1;
+	JLabel label1;
 	
-	//Attributes, probably for file processor
-	//String searchFieldText;
-	//String fileNameText;
-
 	//Button labels.
 	JButton searchButton,button_1;
 	
@@ -44,7 +40,7 @@ JLabel label1;
 		setSize(400,500);
 		setLayout(new FlowLayout());
 		
-		//Current thinking: Mkae object of file processor, but cant pass in file name and search term yet.
+		//Current thinking: Make object of file processor, but cant pass in file name and search term yet.
 		//have those functions in FILEProcessor class 
 		FileProcessor fProcessor = new FileProcessor("Empty","Empty");
 		
@@ -75,6 +71,7 @@ JLabel label1;
 			public void actionPerformed(ActionEvent e) 
 			{
 				//if(e.getSource()==searchButton)
+				//Checks filename entered and and search terms, then compares them to produce results.
 				{
 					JOptionPane.showMessageDialog(searchButton,"Search Clicked.");
 					fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
@@ -97,9 +94,9 @@ JLabel label1;
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
-				JOptionPane.showMessageDialog(searchButton, "Search Clicked.");
-				//Call fProcessor.compareString
-				fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+				String user_input = textfile_field.getText();
+				fProcessor.setFileName(user_input);
+				System.out.print(fProcessor.getFileName());
 			}
 		});
 		
@@ -109,7 +106,7 @@ JLabel label1;
 		JTextField search_field = new JTextField("Enter search term",20);
 		panel1.add(search_field, BorderLayout.CENTER);
 		
-		//Listener function to store input.
+		//Listener function to store input of search term(s).
 		search_field.addActionListener(new ActionListener()
 		{
 			@Override

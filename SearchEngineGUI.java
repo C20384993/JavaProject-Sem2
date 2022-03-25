@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,6 +14,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public class SearchEngineGUI extends JFrame implements ActionListener{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	JLabel label1;
 	

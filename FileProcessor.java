@@ -17,10 +17,10 @@ public class FileProcessor {
 
 	//Constructor
 	//
-	public FileProcessor(String new_fileName, String new_searchText)
+	public FileProcessor(String newFileName, String newSearchText)
 	{
-		this.setFileName(new_fileName);
-		this.setSearchText(new_searchText);
+		this.setFileName(newFileName);
+		this.setSearchText(newSearchText);
 	}
 	
 	//Methods
@@ -31,7 +31,6 @@ public class FileProcessor {
 	//1.) If the user enters a specific file to search through, the method will search only that file for the 
 	//search terms.
 	//2.) If no filenames are entered, then all files will be searched for the search term(s).
-	//***NOTE: Will add way to check files in folder, rather than manually typing each filename in if statement. 
 	//
 	//Buffered Reader code: https://www.guru99.com/buffered-reader-in-java.html
 	public void compareString(String passedFileName, String searchTerms)
@@ -254,6 +253,29 @@ public class FileProcessor {
 
 	//setFileName must check if the file name matches a file available.
 	public void setFileName(String fileName) {
+		//Read the names of the text files that are in the project folder.
+		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993");
+		File[] resources = Textfiles.listFiles();
+		
+		String selectedFile = "";
+		
+		//Go through the project folder to try and find the file name entered.
+		for (File file : resources)
+		{
+		    if (file.isFile())
+		    {
+		    	//Debug
+		        System.out.println(file.getName());
+		        
+		        //Set selectedFile as the found filename.
+		        //These will be used in option 1 of the if/if else statement.
+		        if(fileName.equals(file.getName()) == true)
+		        {
+		        	selectedFile = fileName;
+		        }//end if
+		    }
+		}
+		
 		if(("Meaningful Work.txt").equals(fileName) || ("Rabies and Vaccines.txt").equals(fileName) || 
 		("Phone data and Machine Learning Humanitarian Aid.txt").equals(fileName)) 
 		{
@@ -264,7 +286,7 @@ public class FileProcessor {
 		{
 			System.out.println("Not a matching filename.");
 			System.out.println(fileName);
-			this.fileName = null;
+			this.fileName = "empty";
 		}
 	}
 

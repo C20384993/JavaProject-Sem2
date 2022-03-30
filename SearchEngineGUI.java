@@ -2,72 +2,129 @@ package com.oop.eng;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
-public class SearchEngineGUI extends JFrame implements ActionListener{
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class SearchEngineGUI implements ActionListener{
+	
+	//Frame labels
+	JFrame GUIFrame;
 
 	JLabel label1;
 	
 	//Button labels.
-	JButton searchButton,button_1;
+	JButton searchButton,fileButton;
 	
 	//Panel labels.
-	JPanel panel1;
+	JPanel optionPanel; //Across top.
+	JPanel relatedFilesPanel; //Bottom left.
+	JPanel matchesPanel; //Bottom right.
+	
 	
 	//Text field labels.
-	JTextField textfile_field;
-	JTextField search_field;
+	JTextField textfileField;
+	JTextField searchField;
+	
+	//Create text area that will display various information, e.g. files searched, search terms, list of files with 
+	//highest match at top, etc.
+	JTextArea resultsArea;
 	
 	//Constructor
 	public SearchEngineGUI()
 	{
 		
 		//SearchEngineGUIclass inherits from JFrame class.
-		super("My Search Engine");
+		//super("My Search Engine");
 		
 		
-		setVisible(true);
-		setSize(400,500);
-		setLayout(new FlowLayout());
+		//setSize(400,400);
+		//setLayout(new FlowLayout());
 		
-		//Current thinking: Make object of file processor, but cant pass in file name and search term yet.
-		//have those functions in FILEProcessor class 
+		//Create object of FileProcessor class. The constructor is passed 2 strings: filename, search term(s).
 		FileProcessor fProcessor = new FileProcessor("Empty","Empty");
 		
-		//Create new panel.
-		panel1=new JPanel();
-		add(panel1);
-		panel1.setBackground(Color.red);
-		panel1.setLayout(new FlowLayout());
 		
-		
-		//Create first button.
-		button_1= new JButton("Select file POSSIBLY REDUNDANT.");
-		panel1.add(button_1);
-		//Add hover over text.
-		button_1.setToolTipText("This is the first button, and show a message when clicked.");
-		button_1.addActionListener(this);
-		
-		
+		//Create the components of the GUI.
+		//
+		GUIFrame = new JFrame("My Search Engine");
+		//Create panels.
+		optionPanel=new JPanel(); 
+		matchesPanel=new JPanel();
+		//Create file select button.
+		fileButton= new JButton("Select file.");
 		//Create Search button.
 		searchButton= new JButton("Search.");
-		panel1.add(searchButton);
-		//Add hover over text.
-		searchButton.setToolTipText("Search for your entered terms in the files."); 
+		//Create text field for entering text file.
+		textfileField = new JTextField("Enter filename",20);
+		//Create text field for entering search term.
+		searchField = new JTextField("Enter search term",20);
+		//Create text area that will display various information,
+		resultsArea = new JTextArea(10,20);
+		
+		
+		//Set the initial options of the Frame.
+		GUIFrame.setVisible(true);
+		GUIFrame.setSize(400,400);
+		GUIFrame.add(optionPanel);
+		GUIFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
+		
+		//Add components to the main panel.
+		optionPanel.setLayout(new FlowLayout());
+		optionPanel.add(fileButton);
+		optionPanel.add(searchButton);
+		optionPanel.add(textfileField);
+		optionPanel.add(searchField);
+		optionPanel.add(resultsArea);
+		
+		
+		//Stop user from entering text into the results area.
+		resultsArea.setEditable(false); 
+		
+		
+		//Add titles to the buttons.
+		//https://www.tutorialspoint.com/how-to-create-titled-border-for-a-component-in-java
+		searchButton.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
+		"Search",TitledBorder.LEFT, TitledBorder.TOP));
+		fileButton.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
+		"File Select",TitledBorder.LEFT, TitledBorder.TOP));
+		
+		
+		//Hover over texts
+		fileButton.setToolTipText("Enter the name of the file you wish to search and click to select it. Leave it blank to "
+				+ "search every file in the directory.");
+		fileButton.addActionListener(this);
+		
+		searchButton.setToolTipText("Click this once you have entered the file name and search terms to begin the search.");
+		searchButton.addActionListener(this);
+		
+		
+		/*
+		panel1.add(button_1);
+		//button_1.setLayout(new BoxLayout (this, BoxLayout.Y_AXIS));
+		button_1.setMaximumSize(button_1.getPreferredSize());
+		button_1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "File Select",TitledBorder.LEFT, TitledBorder.TOP));
+		
+		
+		//.createEtchedBorder
+		//.setPreferredSize()
+		*/
+		
+		//Action listeners for search button and other buttons.
+		//
 		searchButton.addActionListener(new ActionListener ()
 		{
 		
@@ -83,44 +140,35 @@ public class SearchEngineGUI extends JFrame implements ActionListener{
 			}
 		});
 		
+		//Listener function to store input for filename.
+		textfileField.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					String userInput = textfileField.getText();
+					fProcessor.setFileName(userInput);
+					System.out.print(fProcessor.getFileName());
+			}
+		});
+		
+		//Listener function to store input of search term(s).
+		searchField.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					String userInput = searchField.getText();
+					fProcessor.setSearchText(userInput);
+					System.out.print(fProcessor.getSearchText());
+			}
+		});
+		
+		
 		
 		//After clicking search button, If a correct filename is chosen && the search term is entered.
 		//Search through file, or if no particular file is selected then search all of them.
 		
-		
-		//Create text field for entering filename.
-		JTextField textfile_field = new JTextField("Enter filename",20);
-		panel1.add(textfile_field);
-		
-		//Listener function to store input for filename.
-		textfile_field.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				String user_input = textfile_field.getText();
-				fProcessor.setFileName(user_input);
-				System.out.print(fProcessor.getFileName());
-			}
-		});
-		
-		
-		
-		//Create text field for entering search term.
-		JTextField search_field = new JTextField("Enter search term",20);
-		panel1.add(search_field, BorderLayout.CENTER);
-		
-		//Listener function to store input of search term(s).
-		search_field.addActionListener(new ActionListener()
-		{
-			@Override
-			public void actionPerformed(ActionEvent e) 
-			{
-				String user_input = search_field.getText();
-				fProcessor.setSearchText(user_input);
-				System.out.print(fProcessor.getSearchText());
-			}
-		});
 		
 	}//end Constructor
 	

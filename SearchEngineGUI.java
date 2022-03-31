@@ -30,7 +30,7 @@ public class SearchEngineGUI implements ActionListener{
 	
 	//Panel labels.
 	JPanel optionPanel; //Across top.
-	JPanel relatedFilesPanel; //Bottom left.
+	JPanel mainPanel; //The main panel. optionPanel and matchesPanel will be added to this one.
 	JPanel matchesPanel; //Bottom right.
 	
 	
@@ -60,35 +60,46 @@ public class SearchEngineGUI implements ActionListener{
 		//Create the components of the GUI.
 		//
 		GUIFrame = new JFrame("My Search Engine");
+		
+		//Set the initial options of the Frame.
+		GUIFrame.setVisible(true);
+		GUIFrame.setSize(400,400);
+		
+		GUIFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		
 		//Create panels.
 		optionPanel=new JPanel(); 
 		matchesPanel=new JPanel();
+		mainPanel = new JPanel();
+		mainPanel.setLayout(new BorderLayout());
+		GUIFrame.add(mainPanel);
+		
 		//Create file select button.
 		fileButton= new JButton("Select file.");
 		//Create Search button.
 		searchButton= new JButton("Search.");
 		//Create text field for entering text file.
-		textfileField = new JTextField("Enter filename",20);
+		textfileField = new JTextField("",20);
 		//Create text field for entering search term.
-		searchField = new JTextField("Enter search term",20);
+		searchField = new JTextField("",20);
 		//Create text area that will display various information,
 		resultsArea = new JTextArea(10,20);
 		
 		
-		//Set the initial options of the Frame.
-		GUIFrame.setVisible(true);
-		GUIFrame.setSize(400,400);
-		GUIFrame.add(optionPanel);
-		GUIFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		
-		
 		//Add components to the main panel.
 		optionPanel.setLayout(new FlowLayout());
+		optionPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
 		optionPanel.add(fileButton);
 		optionPanel.add(searchButton);
 		optionPanel.add(textfileField);
 		optionPanel.add(searchField);
-		optionPanel.add(resultsArea);
+		mainPanel.add(optionPanel, BorderLayout.NORTH);
+		
+		matchesPanel.setLayout(new FlowLayout());
+		matchesPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
+		matchesPanel.add(resultsArea);
+		mainPanel.add(matchesPanel, BorderLayout.SOUTH);
+
 		
 		
 		//Stop user from entering text into the results area.
@@ -97,10 +108,12 @@ public class SearchEngineGUI implements ActionListener{
 		
 		//Add titles to the buttons.
 		//https://www.tutorialspoint.com/how-to-create-titled-border-for-a-component-in-java
-		searchButton.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
-		"Search",TitledBorder.LEFT, TitledBorder.TOP));
-		fileButton.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(),
-		"File Select",TitledBorder.LEFT, TitledBorder.TOP));
+		searchField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
+		"Enter search term(s)",TitledBorder.LEFT, TitledBorder.TOP));
+		textfileField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
+		"Select files",TitledBorder.LEFT, TitledBorder.TOP));
+		resultsArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
+		"Results",TitledBorder.LEFT, TitledBorder.TOP));
 		
 		
 		//Hover over texts
@@ -111,6 +124,8 @@ public class SearchEngineGUI implements ActionListener{
 		searchButton.setToolTipText("Click this once you have entered the file name and search terms to begin the search.");
 		searchButton.addActionListener(this);
 		
+		//Component Sizes
+		searchButton.setPreferredSize(new Dimension(80,40));
 		
 		/*
 		panel1.add(button_1);
@@ -134,13 +149,29 @@ public class SearchEngineGUI implements ActionListener{
 				//if(e.getSource()==searchButton)
 				//Checks filename entered and and search terms, then compares them to produce results.
 				{
-					JOptionPane.showMessageDialog(searchButton,"Search Clicked.");
+					JOptionPane.showMessageDialog(searchButton,"Searching files.");
 					fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
 				}
 			}
 		});
 		
-		//Listener function to store input for filename.
+		
+		//Store input in textfile field if file button is clicked.
+		fileButton.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					String userInput = textfileField.getText();
+					fProcessor.setFileName(userInput);
+					System.out.print(fProcessor.getFileName());
+			}
+		});
+		
+		
+		
+		
+		//Listener function to store input for filename from file text field.
 		textfileField.addActionListener(new ActionListener()
 		{
 			@Override

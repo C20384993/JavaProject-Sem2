@@ -137,14 +137,14 @@ public class FileProcessor {
 			
 		}//end if
 		
-		
+		//---------------------------------------------------------------------------------------------------------------
 		
 		//OPTION 2
 		//2.) No specific filename && search term, i.e. search through every file.
 		
 		//Find file names in folder.
 		//https://stackoverflow.com/questions/52369327/how-to-read-data-from-all-files-one-by-one-in-a-folder-with-java
-		else if(passedFileName == null && searchTerms != null)
+		else if(passedFileName.equals("empty") && searchTerms != null)
 		{
 			System.out.println("2.) No specific filename && have search term");
 			
@@ -239,11 +239,17 @@ public class FileProcessor {
 			System.out.println(numOfMatches1);
 			
 		}//end else if
+		
+		//If an invalid file name is entered, inform user.
+		else
+		{
+			System.out.println("Invalid filename entered.");
+		}//end else
 
 	
 	}//end compareString
 
-		
+	//-----------------------------------------------------------------------------------------------------------------
 	
 	//Getters and Setters
 	//
@@ -252,7 +258,7 @@ public class FileProcessor {
 	}
 
 	//setFileName must check if the file name matches a file available.
-	public void setFileName(String fileName) {
+	public void setFileName(String passedFileName) {
 		//Read the names of the text files that are in the project folder.
 		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993");
 		File[] resources = Textfiles.listFiles();
@@ -268,27 +274,22 @@ public class FileProcessor {
 		        System.out.println(file.getName());
 		        
 		        //Set selectedFile as the found filename.
-		        //These will be used in option 1 of the if/if else statement.
-		        if(fileName.equals(file.getName()) == true)
+		        if(passedFileName.equals(file.getName()) == true)
 		        {
-		        	selectedFile = fileName;
+		        	this.fileName = passedFileName;
 		        }//end if
+		        
+		        //If the file isn't found or an invalid filename is entered, default to searching all files.
+		        else
+		        {
+		        	this.fileName = "empty";
+		        }
 		    }
 		}
 		
-		if(("Meaningful Work.txt").equals(fileName) || ("Rabies and Vaccines.txt").equals(fileName) || 
-		("Phone data and Machine Learning Humanitarian Aid.txt").equals(fileName)) 
-		{
-			this.fileName = fileName;
-		}
+		System.out.println(getFileName());
 		
-		else
-		{
-			System.out.println("Not a matching filename.");
-			System.out.println(fileName);
-			this.fileName = "empty";
-		}
-	}
+	}//end setFileName
 
 	public String getSearchText() {
 		return searchText;

@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -29,9 +30,9 @@ public class SearchEngineGUI implements ActionListener{
 	JButton searchButton,fileButton;
 	
 	//Panel labels.
-	JPanel optionPanel; //Across top.
+	JPanel optionPanel; //Across top, contains components for searching and selecting files.
 	JPanel mainPanel; //The main panel. optionPanel and matchesPanel will be added to this one.
-	JPanel matchesPanel; //Bottom right.
+	JPanel matchesPanel; //Bottom, contains 2 boxes to display results and most significant files.
 	
 	
 	//Text field labels.
@@ -87,7 +88,7 @@ public class SearchEngineGUI implements ActionListener{
 		
 		
 		//Add components to the main panel.
-		optionPanel.setLayout(new FlowLayout());
+		optionPanel.setLayout(new GridLayout(2, 2, 55, 85)); //2x2 layout with gap 35 horizontal, 55 vertical
 		optionPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
 		optionPanel.add(fileButton);
 		optionPanel.add(searchButton);

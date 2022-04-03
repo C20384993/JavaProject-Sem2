@@ -1,11 +1,25 @@
 package com.oop.eng;
 
 import java.io.BufferedReader;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import static java.util.stream.Collectors.*;
+import static java.util.Map.Entry.*;
 
 public class FileProcessor {
 	
@@ -35,8 +49,8 @@ public class FileProcessor {
 	//Buffered Reader code: https://www.guru99.com/buffered-reader-in-java.html
 	public void compareString(String passedFileName, String searchTerms)
 	{
-		//Read the names of the text files that are in the project folder.
-		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993");
+		//Read the names of the text files that are in the TextFiles folder.
+		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
 		File[] resources = Textfiles.listFiles();
 		
 		//Variables
@@ -71,8 +85,7 @@ public class FileProcessor {
 		
 		
 		//1.) Specific filename && search term, i.e. search through given file.
-		//if(("Meaningful Work.txt").equals(fileName) || ("Rabies and Vaccines.txt").equals(fileName) || 
-		//("Phone data and Machine Learning Humanitarian Aid.txt").equals(fileName) && searchTerms != null)
+		//Only if the user has specified a file to search, a search term to search for, and the specified file was found.
 		if(passedFileName != null && searchTerms != null && fileFound == true)
 		{
 			//Debug line
@@ -80,7 +93,7 @@ public class FileProcessor {
 			File userFile = new File(fileName); //Open file
 			String currentLine = ""; //Stores current line of text from file.
 			
-			int i = 0; //Integer for looping through the array.
+			int i = 0; //Integer for looping through the array. **********CHANGE TO ITERATOR************
 			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
 			
 			BufferedReader myBufferReader = null;
@@ -148,12 +161,13 @@ public class FileProcessor {
 		{
 			System.out.println("2.) No specific filename && have search term");
 			
+			
 			int numOfMatches1 = 0; //Count how many time the search was matched.
 			String currentLine = ""; //Stores current line of text from file.
 			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
 			
-			//Read the names of the text files that are in the project folder.
-			File filesFolder = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993");
+			//Read the names of the text files that are in the TextFiles folder.
+			File filesFolder = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
 			File[] resourcesFolder = filesFolder.listFiles();
 			
 			//ArrayList to store each file name.
@@ -171,44 +185,57 @@ public class FileProcessor {
 			    }
 			}
 			
-			//For each file (except .classpath and .project) read through it and perform the same code as in the 
-			//if statement to check for matching terms.
+			//DEBUG
+			System.out.println("Print textFileName");
+			for(int v = 0; v < textFileName.size(); v++) {   
+			    System.out.print(textFileName.get(v));
+			} 
+
+			
+			//Hashmap.
+			//This will store the number of matches and each corresponding file.
+			//
+			// fileResults is a Hash Map. Each file name will be related to an integer.
+			HashMap<String,Integer> fileResults = new HashMap<String,Integer>();
+	        
+			
+			//For each file read through it and perform the same code as in the 
+			//original if statement to check for matching terms.
 			for(int i = 0;i<textFileName.size();i++)
 			{
-				if((textFileName.get(i)).equals(".classpath") == false && textFileName.get(i).equals(".project") == false)
-				{
-					File userFile = new File(textFileName.get(i)); //Open file.
+				File userFile = new File(textFileName.get(i)); //Open file.
 				
-					//Create bufferedreader object.
-					BufferedReader myBufferReader = null;
-					try {
-						myBufferReader = new BufferedReader(new FileReader(userFile));
-					} catch (FileNotFoundException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				//Create bufferedreader object.
+				BufferedReader myBufferReader = null;
+				try {
+					myBufferReader = new BufferedReader(new FileReader(userFile));
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 				
-					//Read through the file.
-					//
-					try {
-						while((currentLine = myBufferReader.readLine()) != null)
+				//Read through the file.
+				//
+				try {
+					while((currentLine = myBufferReader.readLine()) != null)
+					{
+						//Read the current line, split it into an array that contains each word, loop through array
+						//and check if searchTerm matches.
+						
+						//Debug Line
+						y=0;
+						System.out.println("Inside while");
+						
+						//Split currentLine into an array that contains each word.
+						String[] separatedWords = currentLine.split(" ");
+						
+						
+						//Get the length of the array and loop through it.
+						while(y<separatedWords.length)
 						{
-							//Read the current line, split it into an array that contains each word, loop through array
-							//and check if searchTerm matches.
-						
-							//Debug Line
-							y=0;
-							System.out.println("Inside while");
-						
-							//Split currentLine into an array that contains each word.
-							String[] separatedWords = currentLine.split(" ");
-						
-						
-							//Get the length of the array and loop through it.
-							while(y<separatedWords.length)
-							{
-								System.out.println("word["+y+"] = "+separatedWords[y]);
+								//DEBUG
+								//System.out.println("word["+y+"] = "+separatedWords[y]);
 								//If current line has any words matching the searchTerms.
 								if((separatedWords[y]).equals(searchTerms))
 								{
@@ -220,27 +247,41 @@ public class FileProcessor {
 								}
 							
 								y++;
-							}//end while
-							
 						}//end while
+							
+						//After the file has been searched, add the number of matches to
+						//the fileMatchesArray array. The first file searched will always have its
+						//matches number stored at index position 2.
+						fileResults.put(textFileName.get(i),numOfMatches1);
+							
+							
+					}//end while
 						
 					
 				}//end try
+				
 				catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 				
 				
-				}//end if
+				}//end for
 				
-			}//end for
+			}//end else if
 			
-			System.out.println(numOfMatches1);
+			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
+			//the GUI.
+			// Create a list from elements of HashMap
+        
 			
-		}//end else if
+			
+			
+			
+		//end else if
 		
 		//If an invalid file name is entered, inform user.
+	
 		else
 		{
 			System.out.println("Invalid filename entered.");

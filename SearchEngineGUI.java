@@ -128,16 +128,7 @@ public class SearchEngineGUI implements ActionListener{
 		//Component Sizes
 		searchButton.setPreferredSize(new Dimension(80,40));
 		
-		/*
-		panel1.add(button_1);
-		//button_1.setLayout(new BoxLayout (this, BoxLayout.Y_AXIS));
-		button_1.setMaximumSize(button_1.getPreferredSize());
-		button_1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), "File Select",TitledBorder.LEFT, TitledBorder.TOP));
-		
-		
-		//.createEtchedBorder
-		//.setPreferredSize()
-		*/
+	
 		
 		//Action listeners for search button and other buttons.
 		//

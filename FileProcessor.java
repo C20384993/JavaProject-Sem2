@@ -7,19 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 
 import static java.util.stream.Collectors.*;
-import static java.util.Map.Entry.*;
 
 public class FileProcessor {
 	
@@ -78,8 +68,11 @@ public class FileProcessor {
 		}
 		
 		
-		//Variables. These will be used in both options.
-		int numOfMatches = 0; //Count how many time the search was matched.
+		//Count how many time the search was matched. Integer Object used so it can be put into the list of lists.
+		Integer numOfMatches = 0;
+		
+		
+		
 		//Debug line
 		System.out.println(searchTerms);
 		
@@ -162,13 +155,14 @@ public class FileProcessor {
 			System.out.println("2.) No specific filename && have search term");
 			
 			
-			int numOfMatches1 = 0; //Count how many time the search was matched.
+			Integer numOfMatches1 = 0; //Count how many time the search was matched.
 			String currentLine = ""; //Stores current line of text from file.
 			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
 			
 			//Read the names of the text files that are in the TextFiles folder.
 			File filesFolder = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
 			File[] resourcesFolder = filesFolder.listFiles();
+			
 			
 			//ArrayList to store each file name.
 			ArrayList<String> textFileName = new ArrayList<String>();
@@ -190,15 +184,14 @@ public class FileProcessor {
 			for(int v = 0; v < textFileName.size(); v++) {   
 			    System.out.print(textFileName.get(v));
 			} 
-
 			
-			//Hashmap.
+			
 			//This will store the number of matches and each corresponding file.
-			//
-			// fileResults is a Hash Map. Each file name will be related to an integer.
-			HashMap<String,Integer> fileResults = new HashMap<String,Integer>();
-	        
+			//Source: https://www.geeksforgeeks.org/arraylist-of-arraylist-in-java/
+			//Each file name will be related to an integer.
 			
+			List<List<Object>> fileResults = new ArrayList<List<Object>>();
+	        
 			//For each file read through it and perform the same code as in the 
 			//original if statement to check for matching terms.
 			for(int i = 0;i<textFileName.size();i++)
@@ -249,12 +242,6 @@ public class FileProcessor {
 								y++;
 						}//end while
 							
-						//After the file has been searched, add the number of matches to
-						//the fileMatchesArray array. The first file searched will always have its
-						//matches number stored at index position 2.
-						fileResults.put(textFileName.get(i),numOfMatches1);
-							
-							
 					}//end while
 						
 					
@@ -266,19 +253,44 @@ public class FileProcessor {
 				}
 				
 				
+				//After the file has been searched, add the number of matches to
+				//the fileResults lists list. 
+				//https://stackoverflow.com/questions/14767697/dynamically-creating-arraylist-inside-a-loop
+				List<Object> innerList = new ArrayList<>();
+				fileResults.add(innerList);
+				
+				//Open the first list in the fileResults list-of-lists, then add the current file being read to
+				//that list. Then add the numOfMatches found in the list.
+				fileResults.get(i).add(textFileName.get(i));
+				fileResults.get(i).add(numOfMatches1);
+				
+				//Reset numOfMatches for the next file.
+				numOfMatches1 = 0; 
+				
 				}//end for
 				
-			}//end else if
-			
 			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
 			//the GUI.
-			// Create a list from elements of HashMap
-        
+			System.out.println("Displaying the reulsts");
+			System.out.println(fileResults.size());
+			System.out.println(fileResults.get(0).size());
+			System.out.println(fileResults.get(0));
+			System.out.println(fileResults.get(0).get(0));
+			System.out.println(fileResults.get(0).get(1));
+			System.out.println(fileResults.get(0).get(0));
+			System.out.println("index 1");
+			System.out.println(fileResults.get(1));
+			System.out.println("index 2");
+			System.out.println(fileResults.get(2));
+			System.out.println(fileResults.get(2));
+		//	System.out.println("After 2");
+			//System.out.println(fileResults.get(3).get(3));
+			//System.out.println("After 3");
 			
 			
+			}//end else if
 			
 			
-		//end else if
 		
 		//If an invalid file name is entered, inform user.
 	
@@ -301,7 +313,7 @@ public class FileProcessor {
 	//setFileName must check if the file name matches a file available.
 	public void setFileName(String passedFileName) {
 		//Read the names of the text files that are in the project folder.
-		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993");
+		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
 		File[] resources = Textfiles.listFiles();
 		
 		String selectedFile = "";

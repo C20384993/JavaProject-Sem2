@@ -11,7 +11,7 @@ import java.util.List;
 
 import static java.util.stream.Collectors.*;
 
-public class FileProcessor {
+public class FileProcessor extends Control{
 	
 	//Attributes
 	//
@@ -271,7 +271,7 @@ public class FileProcessor {
 				
 			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
 			//the GUI.
-			System.out.println("Displaying the reulsts");
+			/*System.out.println("Displaying the reulsts");
 			System.out.println(fileResults.size());
 			System.out.println(fileResults.get(0).size());
 			System.out.println(fileResults.get(0));
@@ -282,11 +282,28 @@ public class FileProcessor {
 			System.out.println(fileResults.get(1));
 			System.out.println("index 2");
 			System.out.println(fileResults.get(2));
-			System.out.println(fileResults.get(2));
+			System.out.println(fileResults.get(2));*/
 		//	System.out.println("After 2");
 			//System.out.println(fileResults.get(3).get(3));
 			//System.out.println("After 3");
 			
+			
+			//Call quickSort from Control.java???? Interface needed, dont put quicksort in control
+			System.out.println("Before quicksort");
+			System.out.println(fileResults.get(0));
+			System.out.println(fileResults.get(1));
+			System.out.println(fileResults.get(2));
+			System.out.println(fileResults.get(3));
+			//System.out.println(fileResults.get(4));
+			
+			sortBegin(fileResults);
+
+			System.out.println("After quicksort");
+			System.out.println(fileResults.get(0));
+			System.out.println(fileResults.get(1));
+			System.out.println(fileResults.get(2));
+			System.out.println(fileResults.get(3));
+			//System.out.println(fileResults.get(4));
 			
 			}//end else if
 			
@@ -324,7 +341,7 @@ public class FileProcessor {
 		    if (file.isFile())
 		    {
 		    	//Debug
-		        System.out.println(file.getName());
+		        System.out.println("Each file: "+file.getName());
 		        
 		        //Set selectedFile as the found filename.
 		        if(passedFileName.equals(file.getName()) == true)

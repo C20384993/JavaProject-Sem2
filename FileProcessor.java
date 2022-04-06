@@ -7,11 +7,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static java.util.stream.Collectors.*;
 
-public class FileProcessor extends Control{
+public class FileProcessor{
 	
 	//Attributes
 	//
@@ -36,8 +38,10 @@ public class FileProcessor extends Control{
 	//search terms.
 	//2.) If no filenames are entered, then all files will be searched for the search term(s).
 	//
+	//Returns an ArrayList.
+	//
 	//Buffered Reader code: https://www.guru99.com/buffered-reader-in-java.html
-	public void compareString(String passedFileName, String searchTerms)
+	public ArrayList<TextFile> compareString(String passedFileName, String searchTerms)
 	{
 		//Read the names of the text files that are in the TextFiles folder.
 		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
@@ -85,6 +89,10 @@ public class FileProcessor extends Control{
 			System.out.println("Inside if");
 			File userFile = new File(fileName); //Open file
 			String currentLine = ""; //Stores current line of text from file.
+			
+			//singularFileResults ArrayList will store a TextFile.java object for each file read/ a single file.
+			//
+			ArrayList<TextFile> singularFileResults = new ArrayList<TextFile>();
 			
 			int i = 0; //Integer for looping through the array. **********CHANGE TO ITERATOR************
 			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
@@ -139,7 +147,12 @@ public class FileProcessor extends Control{
 				e.printStackTrace();
 			}
 			
+			//Selected only 1 file to search, so add this file and its numOfMatches to fileResults, a new TextFile object.
+			singularFileResults.add(new TextFile(passedFileName,numOfMatches));
+			
 			System.out.println(numOfMatches);
+			
+			return singularFileResults;
 			
 		}//end if
 		
@@ -165,7 +178,12 @@ public class FileProcessor extends Control{
 			
 			
 			//ArrayList to store each file name.
+			//
 			ArrayList<String> textFileName = new ArrayList<String>();
+			
+			//fileResults ArrayList will store a TextFile.java object for each file read.
+			//
+			ArrayList<TextFile> fileResults = new ArrayList<TextFile>();
 
 			//Fill textFileName with each text file name in the project folder.
 			for (File file : resourcesFolder)
@@ -185,12 +203,6 @@ public class FileProcessor extends Control{
 			    System.out.print(textFileName.get(v));
 			} 
 			
-			
-			//This will store the number of matches and each corresponding file.
-			//Source: https://www.geeksforgeeks.org/arraylist-of-arraylist-in-java/
-			//Each file name will be related to an integer.
-			
-			List<List<Object>> fileResults = new ArrayList<List<Object>>();
 	        
 			//For each file read through it and perform the same code as in the 
 			//original if statement to check for matching terms.
@@ -240,6 +252,7 @@ public class FileProcessor extends Control{
 								}
 							
 								y++;
+								
 						}//end while
 							
 					}//end while
@@ -253,16 +266,12 @@ public class FileProcessor extends Control{
 				}
 				
 				
-				//After the file has been searched, add the number of matches to
-				//the fileResults lists list. 
+				//After the file has been searched, create an TextFile object of the file and store it in fileResults.
+				//the fileResults Arraylists. 
 				//https://stackoverflow.com/questions/14767697/dynamically-creating-arraylist-inside-a-loop
-				List<Object> innerList = new ArrayList<>();
-				fileResults.add(innerList);
+				//TextFile tf1 = new TextFile(textFileName.get(i),numOfMatches1);
+				fileResults.add(new TextFile(textFileName.get(i),numOfMatches1));
 				
-				//Open the first list in the fileResults list-of-lists, then add the current file being read to
-				//that list. Then add the numOfMatches found in the list.
-				fileResults.get(i).add(textFileName.get(i));
-				fileResults.get(i).add(numOfMatches1);
 				
 				//Reset numOfMatches for the next file.
 				numOfMatches1 = 0; 
@@ -271,55 +280,60 @@ public class FileProcessor extends Control{
 				
 			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
 			//the GUI.
-			/*System.out.println("Displaying the reulsts");
-			System.out.println(fileResults.size());
-			System.out.println(fileResults.get(0).size());
-			System.out.println(fileResults.get(0));
-			System.out.println(fileResults.get(0).get(0));
-			System.out.println(fileResults.get(0).get(1));
-			System.out.println(fileResults.get(0).get(0));
-			System.out.println("index 1");
-			System.out.println(fileResults.get(1));
-			System.out.println("index 2");
-			System.out.println(fileResults.get(2));
-			System.out.println(fileResults.get(2));*/
-		//	System.out.println("After 2");
-			//System.out.println(fileResults.get(3).get(3));
-			//System.out.println("After 3");
 			
+			System.out.println("fileResults arraylist");
+			System.out.println(fileResults.get(0).getTextFileName());
+			System.out.println(fileResults.get(0).getSearchMatches());
 			
-			//Call quickSort from Control.java???? Interface needed, dont put quicksort in control
-			System.out.println("Before quicksort");
-			System.out.println(fileResults.get(0));
-			System.out.println(fileResults.get(1));
-			System.out.println(fileResults.get(2));
-			System.out.println(fileResults.get(3));
-			//System.out.println(fileResults.get(4));
+			System.out.println(fileResults.get(1).getTextFileName());
+			System.out.println(fileResults.get(1).getSearchMatches());
 			
-			sortBegin(fileResults);
+			System.out.println(fileResults.get(2).getTextFileName());
+			System.out.println(fileResults.get(2).getSearchMatches());
+			
+			System.out.println(fileResults.get(3).getTextFileName());
+			System.out.println(fileResults.get(3).getSearchMatches());
+			
+			System.out.println(fileResults.get(4).getTextFileName());
+			System.out.println(fileResults.get(4).getSearchMatches());
 
-			System.out.println("After quicksort");
-			System.out.println(fileResults.get(0));
-			System.out.println(fileResults.get(1));
-			System.out.println(fileResults.get(2));
-			System.out.println(fileResults.get(3));
-			//System.out.println(fileResults.get(4));
+			//https://www.youtube.com/watch?v=wzWFQTLn8hI
+			Collections.sort(fileResults, new Comparator<TextFile>()
+			{
+				public int compare(TextFile textfile1, TextFile textfile2)
+				{
+					return Integer.valueOf(textfile2.getSearchMatches()).compareTo(textfile1.getSearchMatches());
+				}
+					
+			});
+			
+			System.out.println("fileResults after sort");
+			System.out.println(fileResults.get(0).getTextFileName());
+			System.out.println(fileResults.get(0).getSearchMatches());
+			
+			System.out.println(fileResults.get(1).getTextFileName());
+			System.out.println(fileResults.get(1).getSearchMatches());
+			
+			System.out.println(fileResults.get(2).getTextFileName());
+			System.out.println(fileResults.get(2).getSearchMatches());
+			
+			System.out.println(fileResults.get(3).getTextFileName());
+			System.out.println(fileResults.get(3).getSearchMatches());
+			
+			System.out.println(fileResults.get(4).getTextFileName());
+			System.out.println(fileResults.get(4).getSearchMatches());
+			
+			return fileResults;
 			
 			}//end else if
-			
-			
 		
-		//If an invalid file name is entered, inform user.
-	
-		else
-		{
-			System.out.println("Invalid filename entered.");
-		}//end else
+		return null;
+			
 
 	
 	}//end compareString
 
-	//-----------------------------------------------------------------------------------------------------------------
+	//----------------------------------------------------------------------------------------------------------------------------------
 	
 	//Getters and Setters
 	//

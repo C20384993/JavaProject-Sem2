@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -132,6 +133,8 @@ public class SearchEngineGUI implements ActionListener{
 		
 		//Action listeners for search button and other buttons.
 		//
+		
+		//Search the file(s) when the search button is clicked.
 		searchButton.addActionListener(new ActionListener ()
 		{
 		
@@ -142,7 +145,14 @@ public class SearchEngineGUI implements ActionListener{
 				//Checks filename entered and and search terms, then compares them to produce results.
 				{
 					JOptionPane.showMessageDialog(searchButton,"Searching files.");
-					fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+					ArrayList<TextFile> displayResults = new ArrayList<TextFile>();
+					displayResults = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+					resultsArea.append(displayResults.get(0).getTextFileName());
+					resultsArea.append("\n");
+					resultsArea.append(displayResults.get(1).getTextFileName());
+					resultsArea.append("\n");
+					resultsArea.append(displayResults.get(2).getTextFileName());
+					
 				}
 			}
 		});

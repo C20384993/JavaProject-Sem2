@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import static java.util.stream.Collectors.*;
 
@@ -56,10 +55,12 @@ public class FileProcessor{
 		//Go through the project folder to try and find the file name entered.
 		for (File file : resources)
 		{
+			//Check it's a file and not a directory.
 		    if (file.isFile())
 		    {
 		    	//Debug
 		        System.out.println(file.getName());
+		        System.out.println(file.exists());
 		        
 		        //Set selectedFile as the found filename and fileFound to true. 
 		        //These will be used in option 1 of the if/if else statement.
@@ -74,6 +75,9 @@ public class FileProcessor{
 		
 		//Count how many time the search was matched. Integer Object used so it can be put into the list of lists.
 		Integer numOfMatches = 0;
+		
+		//Count how many words are in the file.
+		int wordCount = 0;
 		
 		
 		
@@ -99,7 +103,7 @@ public class FileProcessor{
 			
 			BufferedReader myBufferReader = null;
 			try {
-				myBufferReader = new BufferedReader(new FileReader(userFile));
+				myBufferReader = new BufferedReader(new FileReader("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles\\"+userFile));
 			} catch (FileNotFoundException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -119,6 +123,9 @@ public class FileProcessor{
 					
 					//Split currentLine into an array that contains each word.
 					String[] separatedWords = currentLine.split(" ");
+					
+					//Add the number of words found in the current line of the file to the word count.
+					wordCount = wordCount+separatedWords.length;
 					
 					
 					//Get the length of the array and loop through it.
@@ -147,8 +154,13 @@ public class FileProcessor{
 				e.printStackTrace();
 			}
 			
+			System.out.println("numOfMatches = "+numOfMatches);
+			System.out.println("wordCount = "+wordCount);
+			//System.out.println();
+			System.out.println("Percentage = "+((float)numOfMatches/wordCount)*100);
+			
 			//Selected only 1 file to search, so add this file and its numOfMatches to fileResults, a new TextFile object.
-			singularFileResults.add(new TextFile(passedFileName,numOfMatches));
+			singularFileResults.add(new TextFile(passedFileName,numOfMatches,((float)numOfMatches/wordCount)*100));
 			
 			System.out.println(numOfMatches);
 			
@@ -184,6 +196,9 @@ public class FileProcessor{
 			//fileResults ArrayList will store a TextFile.java object for each file read.
 			//
 			ArrayList<TextFile> fileResults = new ArrayList<TextFile>();
+			
+			int wordCount1 = 0;
+			
 
 			//Fill textFileName with each text file name in the project folder.
 			for (File file : resourcesFolder)
@@ -235,6 +250,9 @@ public class FileProcessor{
 						//Split currentLine into an array that contains each word.
 						String[] separatedWords = currentLine.split(" ");
 						
+						//Add the number of words found in the current line of the file to the word count.
+						wordCount1 = wordCount+separatedWords.length;
+						
 						
 						//Get the length of the array and loop through it.
 						while(y<separatedWords.length)
@@ -270,7 +288,9 @@ public class FileProcessor{
 				//the fileResults Arraylists. 
 				//https://stackoverflow.com/questions/14767697/dynamically-creating-arraylist-inside-a-loop
 				//TextFile tf1 = new TextFile(textFileName.get(i),numOfMatches1);
-				fileResults.add(new TextFile(textFileName.get(i),numOfMatches1));
+				//System.out.println("numOfmATCHES");
+				System.out.println("Percentage = "+(numOfMatches1/wordCount1)*100);
+				fileResults.add(new TextFile(textFileName.get(i),numOfMatches1,(numOfMatches1/wordCount1)*100));
 				
 				
 				//Reset numOfMatches for the next file.
@@ -281,21 +301,6 @@ public class FileProcessor{
 			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
 			//the GUI.
 			
-			System.out.println("fileResults arraylist");
-			System.out.println(fileResults.get(0).getTextFileName());
-			System.out.println(fileResults.get(0).getSearchMatches());
-			
-			System.out.println(fileResults.get(1).getTextFileName());
-			System.out.println(fileResults.get(1).getSearchMatches());
-			
-			System.out.println(fileResults.get(2).getTextFileName());
-			System.out.println(fileResults.get(2).getSearchMatches());
-			
-			System.out.println(fileResults.get(3).getTextFileName());
-			System.out.println(fileResults.get(3).getSearchMatches());
-			
-			System.out.println(fileResults.get(4).getTextFileName());
-			System.out.println(fileResults.get(4).getSearchMatches());
 
 			//https://www.youtube.com/watch?v=wzWFQTLn8hI
 			Collections.sort(fileResults, new Comparator<TextFile>()
@@ -307,21 +312,6 @@ public class FileProcessor{
 					
 			});
 			
-			System.out.println("fileResults after sort");
-			System.out.println(fileResults.get(0).getTextFileName());
-			System.out.println(fileResults.get(0).getSearchMatches());
-			
-			System.out.println(fileResults.get(1).getTextFileName());
-			System.out.println(fileResults.get(1).getSearchMatches());
-			
-			System.out.println(fileResults.get(2).getTextFileName());
-			System.out.println(fileResults.get(2).getSearchMatches());
-			
-			System.out.println(fileResults.get(3).getTextFileName());
-			System.out.println(fileResults.get(3).getSearchMatches());
-			
-			System.out.println(fileResults.get(4).getTextFileName());
-			System.out.println(fileResults.get(4).getSearchMatches());
 			
 			return fileResults;
 			
@@ -361,6 +351,7 @@ public class FileProcessor{
 		        if(passedFileName.equals(file.getName()) == true)
 		        {
 		        	this.fileName = passedFileName;
+		        	return;
 		        }//end if
 		        
 		        //If the file isn't found or an invalid filename is entered, default to searching all files.
@@ -385,4 +376,4 @@ public class FileProcessor{
 
 	
 	
-}
+}//end FileProcessor

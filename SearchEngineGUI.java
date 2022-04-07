@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
@@ -145,13 +146,16 @@ public class SearchEngineGUI implements ActionListener{
 				//Checks filename entered and and search terms, then compares them to produce results.
 				{
 					JOptionPane.showMessageDialog(searchButton,"Searching files.");
-					ArrayList<TextFile> displayResults = new ArrayList<TextFile>();
-					displayResults = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
-					resultsArea.append(displayResults.get(0).getTextFileName());
+					ArrayList<TextFile> resultsArrayList = new ArrayList<TextFile>();
+					
+					resultsArrayList = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+					
+					resultsArea.append(resultsArrayList.get(0).getTextFileName());
 					resultsArea.append("\n");
-					resultsArea.append(displayResults.get(1).getTextFileName());
+					resultsArea.append(String.valueOf(resultsArrayList.get(0).getSearchMatches()));
 					resultsArea.append("\n");
-					resultsArea.append(displayResults.get(2).getTextFileName());
+					resultsArea.append(String.valueOf(resultsArrayList.get(0).getMatchPercentage()));
+					resultsArea.append("\n");
 					
 				}
 			}
@@ -204,7 +208,6 @@ public class SearchEngineGUI implements ActionListener{
 		
 		
 	}//end Constructor
-	
 	
 	
 	public static void main(String[] args)

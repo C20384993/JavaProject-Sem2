@@ -9,10 +9,11 @@ public class TextFile{
 
 	//Constructor
 	//
-	public TextFile(String newTextFileName, int newSearchMatches)
+	public TextFile(String newTextFileName, int newSearchMatches, float newMatchPercentage)
 	{
 		this.setTextFileName(newTextFileName);
 		this.setSearchMatches(newSearchMatches);
+		this.setMatchPercentage(newMatchPercentage);
 	}
 	
 

@@ -29,7 +29,10 @@ public class SearchEngineGUI implements ActionListener{
 	JLabel label1;
 	
 	//Button labels.
-	JButton searchButton,fileButton;
+	JButton searchButton;
+	JButton fileButton;
+	JButton separateWordSearch; //If user wants to search for files with the search terms anywhere.
+	JButton combinedWordSearch; //If user wants to search for a specific phrase.
 	
 	//Panel labels.
 	JPanel optionPanel; //Across top, contains components for searching and selecting files.
@@ -44,17 +47,16 @@ public class SearchEngineGUI implements ActionListener{
 	//Create text area that will display various information, e.g. files searched, search terms, list of files with 
 	//highest match at top, etc.
 	JTextArea resultsArea;
+	JTextArea searchOptions; //Display selected search options.
+	
+	//Stores selection for separate or combined phrase searching.
+	//0: separate (default setting)
+	//1: combined
+	int phraseOption = 0;
 	
 	//Constructor
 	public SearchEngineGUI()
 	{
-		
-		//SearchEngineGUIclass inherits from JFrame class.
-		//super("My Search Engine");
-		
-		
-		//setSize(400,400);
-		//setLayout(new FlowLayout());
 		
 		//Create object of FileProcessor class. The constructor is passed 2 strings: filename, search term(s).
 		FileProcessor fProcessor = new FileProcessor("Empty","Empty");
@@ -88,12 +90,20 @@ public class SearchEngineGUI implements ActionListener{
 		//Create text area that will display various information,
 		resultsArea = new JTextArea(10,20);
 		
+		searchOptions = new JTextArea(10,20);
+		
+		separateWordSearch= new JButton("Any words");
+		
+		combinedWordSearch= new JButton("Specific phrase");
+		
 		
 		//Add components to the main panel.
 		optionPanel.setLayout(new GridLayout(2, 2, 55, 85)); //2x2 layout with gap 35 horizontal, 55 vertical
 		optionPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
 		optionPanel.add(fileButton);
 		optionPanel.add(searchButton);
+		optionPanel.add(separateWordSearch);
+		optionPanel.add(combinedWordSearch);
 		optionPanel.add(textfileField);
 		optionPanel.add(searchField);
 		mainPanel.add(optionPanel, BorderLayout.NORTH);
@@ -101,6 +111,7 @@ public class SearchEngineGUI implements ActionListener{
 		matchesPanel.setLayout(new FlowLayout());
 		matchesPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
 		matchesPanel.add(resultsArea);
+		matchesPanel.add(searchOptions);
 		mainPanel.add(matchesPanel, BorderLayout.SOUTH);
 
 		
@@ -117,6 +128,8 @@ public class SearchEngineGUI implements ActionListener{
 		"Select files",TitledBorder.LEFT, TitledBorder.TOP));
 		resultsArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
 		"Results",TitledBorder.LEFT, TitledBorder.TOP));
+		searchOptions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
+		"Current Search Parameters",TitledBorder.LEFT, TitledBorder.TOP));
 		
 		
 		//Hover over texts
@@ -148,8 +161,11 @@ public class SearchEngineGUI implements ActionListener{
 					JOptionPane.showMessageDialog(searchButton,"Searching files.");
 					ArrayList<TextFile> resultsArrayList = new ArrayList<TextFile>();
 					
-					resultsArrayList = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText());
+					//Empty the resultsArrayList before entering new data.
+					resultsArrayList.removeAll(resultsArrayList);
+					resultsArrayList = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText(), phraseOption);
 					
+					resultsArea.setText(null);
 					resultsArea.append(resultsArrayList.get(0).getTextFileName());
 					resultsArea.append("\n");
 					resultsArea.append(String.valueOf(resultsArrayList.get(0).getSearchMatches()));
@@ -169,7 +185,12 @@ public class SearchEngineGUI implements ActionListener{
 			public void actionPerformed(ActionEvent e) 
 			{
 					String userInput = textfileField.getText();
-					fProcessor.setFileName(userInput);
+					if(fProcessor.setFileName(userInput) == false)
+					{
+						resultsArea.append("A file with that name could not be found.");
+						resultsArea.append("\n");
+						resultsArea.append("Every file will be searched instead.");
+					}//end if
 					System.out.print(fProcessor.getFileName());
 			}
 		});
@@ -189,6 +210,7 @@ public class SearchEngineGUI implements ActionListener{
 			}
 		});
 		
+		
 		//Listener function to store input of search term(s).
 		searchField.addActionListener(new ActionListener()
 		{
@@ -200,6 +222,33 @@ public class SearchEngineGUI implements ActionListener{
 					System.out.print(fProcessor.getSearchText());
 			}
 		});
+		
+		
+		//Listener function to store combined or separate option selection.
+		separateWordSearch.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					//Set to 0 for separate word searching.
+					phraseOption = 0;
+					searchOptions.append("Search: Separate");
+			}
+		});
+		
+		
+		//Listener function to store combined or separate option selection.
+		combinedWordSearch.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					//Set to 1 for combined word searching.
+					phraseOption = 1;
+					searchOptions.append("Search: Combined");
+			}
+		});
+		
 		
 		
 		

@@ -165,6 +165,8 @@ public class SearchEngineGUI implements ActionListener{
 					resultsArrayList.removeAll(resultsArrayList);
 					resultsArrayList = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText(), phraseOption);
 					
+					if(resultsArrayList.size() > 0)
+					{	
 					resultsArea.setText(null);
 					resultsArea.append(resultsArrayList.get(0).getTextFileName());
 					resultsArea.append("\n");
@@ -172,6 +174,7 @@ public class SearchEngineGUI implements ActionListener{
 					resultsArea.append("\n");
 					resultsArea.append(String.valueOf(resultsArrayList.get(0).getMatchPercentage()));
 					resultsArea.append("\n");
+					}
 					
 				}
 			}
@@ -191,7 +194,7 @@ public class SearchEngineGUI implements ActionListener{
 						resultsArea.append("\n");
 						resultsArea.append("Every file will be searched instead.");
 					}//end if
-					System.out.print(fProcessor.getFileName());
+					System.out.print("selected .getfilename = "+fProcessor.getFileName());
 			}
 		});
 		
@@ -206,7 +209,7 @@ public class SearchEngineGUI implements ActionListener{
 			{
 					String userInput = textfileField.getText();
 					fProcessor.setFileName(userInput);
-					System.out.print(fProcessor.getFileName());
+					System.out.print("selected .getfilename = "+fProcessor.getFileName());
 			}
 		});
 		

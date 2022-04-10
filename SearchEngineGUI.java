@@ -9,14 +9,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
@@ -26,18 +32,32 @@ public class SearchEngineGUI implements ActionListener{
 	//Frame labels
 	JFrame GUIFrame;
 
-	JLabel label1;
+	//JLabel label1;
+	
+	//Button group label, used to add radio buttons to it so only 1 can be selected.
+	ButtonGroup separateCombinedGroup;
+	
+	//Radio button labels.
+	JRadioButton separateRadio; //If user wants to search for files with the search terms anywhere.
+	JRadioButton combinedRadio; //If user wants to search for a specific phrase.
 	
 	//Button labels.
 	JButton searchButton;
 	JButton fileButton;
-	JButton separateWordSearch; //If user wants to search for files with the search terms anywhere.
-	JButton combinedWordSearch; //If user wants to search for a specific phrase.
+	
 	
 	//Panel labels.
-	JPanel optionPanel; //Across top, contains components for searching and selecting files.
 	JPanel mainPanel; //The main panel. optionPanel and matchesPanel will be added to this one.
-	JPanel matchesPanel; //Bottom, contains 2 boxes to display results and most significant files.
+	//
+	//Split mainPanel into smaller parts by adding panels to it.
+	JPanel topPanel; 
+	JPanel bottomPanel; 
+	//
+	//Split topPanel into two more parts.
+	//
+	JPanel paramPanel; //Contains searchOptions text area and 2 radio buttons (separate, combined).
+	JPanel searchBtnPanel; //Contains search button, search terms text field, filename textfield.
+	
 	
 	
 	//Text field labels.
@@ -48,6 +68,9 @@ public class SearchEngineGUI implements ActionListener{
 	//highest match at top, etc.
 	JTextArea resultsArea;
 	JTextArea searchOptions; //Display selected search options.
+	
+	//Scroll labels.
+	JScrollPane resultsScroll;
 	
 	//Stores selection for separate or combined phrase searching.
 	//0: separate (default setting)
@@ -68,15 +91,19 @@ public class SearchEngineGUI implements ActionListener{
 		
 		//Set the initial options of the Frame.
 		GUIFrame.setVisible(true);
-		GUIFrame.setSize(400,400);
+		GUIFrame.setSize(600,625);
 		
 		GUIFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
 		//Create panels.
-		optionPanel=new JPanel(); 
-		matchesPanel=new JPanel();
+		topPanel=new JPanel(); 
+		bottomPanel=new JPanel();
+		paramPanel=new JPanel();
+		searchBtnPanel=new JPanel();
 		mainPanel = new JPanel();
-		mainPanel.setLayout(new BorderLayout());
+		
+		//Settings for mainPanel.
+		mainPanel.setLayout(new GridLayout(2, 1, 0, 0));
 		GUIFrame.add(mainPanel);
 		
 		//Create file select button.
@@ -88,57 +115,89 @@ public class SearchEngineGUI implements ActionListener{
 		//Create text field for entering search term.
 		searchField = new JTextField("",20);
 		//Create text area that will display various information,
-		resultsArea = new JTextArea(10,20);
+		resultsArea = new JTextArea(20,40);
+		//Create button group.
+		separateCombinedGroup = new ButtonGroup();
+		//Create radio buttons.
+		separateRadio = new JRadioButton();
+		combinedRadio = new JRadioButton();
+		//Create resultsArea scroll.
+		resultsScroll = new JScrollPane(resultsArea);
+		resultsScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
+		separateRadio.setText("Separate");
+		combinedRadio.setText("Combined");
 		searchOptions = new JTextArea(10,20);
 		
-		separateWordSearch= new JButton("Any words");
 		
-		combinedWordSearch= new JButton("Specific phrase");
+		//Settings for topPanel.
+		topPanel.setLayout(new GridLayout(1, 2, 55, 85)); //1x2 (rowsxcolumns) layout with gap 35 horizontal, 55 vertical
+		topPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
 		
+		//Settings for paramPanel and searchBtnPanel
+		paramPanel.setLayout(new FlowLayout());
+		searchBtnPanel.setLayout(new FlowLayout());
 		
-		//Add components to the main panel.
-		optionPanel.setLayout(new GridLayout(2, 2, 55, 85)); //2x2 layout with gap 35 horizontal, 55 vertical
-		optionPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
-		optionPanel.add(fileButton);
-		optionPanel.add(searchButton);
-		optionPanel.add(separateWordSearch);
-		optionPanel.add(combinedWordSearch);
-		optionPanel.add(textfileField);
-		optionPanel.add(searchField);
-		mainPanel.add(optionPanel, BorderLayout.NORTH);
+		//Add components to paramPanel and searchBtnPanel
+		paramPanel.add(searchOptions);
+		paramPanel.add(separateRadio);
+		paramPanel.add(combinedRadio);
+		searchBtnPanel.add(searchField);
+		searchBtnPanel.add(textfileField);
+		searchBtnPanel.add(searchButton);
 		
-		matchesPanel.setLayout(new FlowLayout());
-		matchesPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
-		matchesPanel.add(resultsArea);
-		matchesPanel.add(searchOptions);
-		mainPanel.add(matchesPanel, BorderLayout.SOUTH);
+		//Add radio buttons to button group.
+		separateCombinedGroup.add(separateRadio);
+		separateCombinedGroup.add(combinedRadio);
+		
+		//Add paramPanel and searchBtnPanel to topPanel.
+		topPanel.add(paramPanel);
+		topPanel.add(searchBtnPanel);
+
+		//Add topPanel to the mainPanel.
+		mainPanel.add(topPanel);
+		
+		//Settings for matchesPanel.
+		bottomPanel.setLayout(new BorderLayout());
+		bottomPanel.setPreferredSize(new Dimension(GUIFrame.getWidth(),200));
+		
+		//Components for matchesPanel.
+		bottomPanel.add(resultsScroll, BorderLayout.CENTER);
+		
+		//Add bottomPanel to mainPanel.
+		mainPanel.add(bottomPanel);
 
 		
-		
-		//Stop user from entering text into the results area.
+		//Stop user from entering text into the results and search parameters areas.
 		resultsArea.setEditable(false); 
+		searchOptions.setEditable(false);
 		
 		
 		//Add titles to the buttons.
 		//https://www.tutorialspoint.com/how-to-create-titled-border-for-a-component-in-java
 		searchField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
 		"Enter search term(s)",TitledBorder.LEFT, TitledBorder.TOP));
+		
 		textfileField.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
 		"Select files",TitledBorder.LEFT, TitledBorder.TOP));
+		
 		resultsArea.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
 		"Results",TitledBorder.LEFT, TitledBorder.TOP));
+		
 		searchOptions.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEtchedBorder(), 
 		"Current Search Parameters",TitledBorder.LEFT, TitledBorder.TOP));
 		
 		
-		//Hover over texts
-		fileButton.setToolTipText("Enter the name of the file you wish to search and click to select it. Leave it blank to "
-				+ "search every file in the directory.");
-		fileButton.addActionListener(this);
-		
-		searchButton.setToolTipText("Click this once you have entered the file name and search terms to begin the search.");
+		//Hover over texts		
+		searchButton.setToolTipText("Click this once you have selected your search parameters to begin the search.");
 		searchButton.addActionListener(this);
+		
+		textfileField.setToolTipText("Enter the file name you wish to search. If left blank or the file couldn't be found, every"
+				+ " file will be searched.");
+		textfileField.addActionListener(this);
+		
+		searchField.setToolTipText("Enter the terms to search for.");
+		searchField.addActionListener(this);
 		
 		//Component Sizes
 		searchButton.setPreferredSize(new Dimension(80,40));
@@ -158,23 +217,53 @@ public class SearchEngineGUI implements ActionListener{
 				//if(e.getSource()==searchButton)
 				//Checks filename entered and and search terms, then compares them to produce results.
 				{
+					//Only search the file(s) if search terms have been entered.
+					//
+				if(fProcessor.getSearchText()[0].equals("")==false)
+				{
 					JOptionPane.showMessageDialog(searchButton,"Searching files.");
 					ArrayList<TextFile> resultsArrayList = new ArrayList<TextFile>();
+					
 					
 					//Empty the resultsArrayList before entering new data.
 					resultsArrayList.removeAll(resultsArrayList);
 					resultsArrayList = fProcessor.compareString(fProcessor.getFileName(), fProcessor.getSearchText(), phraseOption);
 					
+					
+					System.out.println("Before if");
+					//Only display files with matches.
 					if(resultsArrayList.size() > 0)
 					{	
-					resultsArea.setText(null);
-					resultsArea.append(resultsArrayList.get(0).getTextFileName());
-					resultsArea.append("\n");
-					resultsArea.append(String.valueOf(resultsArrayList.get(0).getSearchMatches()));
-					resultsArea.append("\n");
-					resultsArea.append(String.valueOf(resultsArrayList.get(0).getMatchPercentage()));
-					resultsArea.append("\n");
+						resultsArea.setText(null);
+						System.out.println("Before while");
+						for(int resultsArrayIter = 0;resultsArrayIter < resultsArrayList.size();resultsArrayIter++)
+						{
+							resultsArea.append("File Name: "+resultsArrayList.get(resultsArrayIter).getTextFileName());
+
+							resultsArea.append("\nNumber of matches: "+resultsArrayList.get(resultsArrayIter).getSearchMatches());
+							
+							resultsArea.append("\nSearch term(s) as a percentage of file words: "+resultsArrayList.get(resultsArrayIter).getMatchPercentage()+"%");
+							
+							resultsArea.append("\n------------------------------------------------");
+							resultsArea.append("\n");
+							resultsArea.append("\n");
+							
+						}
 					}
+					
+					//If no files were found
+					else
+					{
+						resultsArea.setText(null);
+						resultsArea.setText("No matches found in file(s).");
+					}//end else
+					
+				}//end if
+				
+				else
+				{
+					JOptionPane.showMessageDialog(searchButton,"No search terms were entered, cancelling search.");
+				}//end else
 					
 				}
 			}
@@ -190,9 +279,9 @@ public class SearchEngineGUI implements ActionListener{
 					String userInput = textfileField.getText();
 					if(fProcessor.setFileName(userInput) == false)
 					{
-						resultsArea.append("A file with that name could not be found.");
-						resultsArea.append("\n");
-						resultsArea.append("Every file will be searched instead.");
+						
+						displaySearchParam(fProcessor);
+
 					}//end if
 					System.out.print("selected .getfilename = "+fProcessor.getFileName());
 			}
@@ -210,6 +299,7 @@ public class SearchEngineGUI implements ActionListener{
 					String userInput = textfileField.getText();
 					fProcessor.setFileName(userInput);
 					System.out.print("selected .getfilename = "+fProcessor.getFileName());
+					displaySearchParam(fProcessor);
 			}
 		});
 		
@@ -223,32 +313,33 @@ public class SearchEngineGUI implements ActionListener{
 					String userInput = searchField.getText();
 					fProcessor.setSearchText(userInput);
 					System.out.print(fProcessor.getSearchText());
+					displaySearchParam(fProcessor);
 			}
 		});
 		
 		
 		//Listener function to store combined or separate option selection.
-		separateWordSearch.addActionListener(new ActionListener()
+		separateRadio.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 					//Set to 0 for separate word searching.
 					phraseOption = 0;
-					searchOptions.append("Search: Separate");
+					displaySearchParam(fProcessor);
 			}
 		});
 		
 		
 		//Listener function to store combined or separate option selection.
-		combinedWordSearch.addActionListener(new ActionListener()
+		combinedRadio.addActionListener(new ActionListener()
 		{
 			@Override
 			public void actionPerformed(ActionEvent e) 
 			{
 					//Set to 1 for combined word searching.
 					phraseOption = 1;
-					searchOptions.append("Search: Combined");
+					displaySearchParam(fProcessor);
 			}
 		});
 		
@@ -261,6 +352,46 @@ public class SearchEngineGUI implements ActionListener{
 		
 	}//end Constructor
 	
+	//Each time user makes a change to search parameters, new parameters will be displayed by this function.
+	//
+	private void displaySearchParam(FileProcessor fProcessor)
+	{
+		//Clear all text from searchOption text area.
+		searchOptions.setText("");
+		
+		searchOptions.append("Search Term(s): "+Arrays.toString(fProcessor.getSearchText()));
+		
+		//If no file could be found/default setting.
+		if(fProcessor.getFileName().equals("empty"))
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nFile(s) Selected: All files");
+			
+		}
+		
+		//If 1 file is selected to be searched.
+		else
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nFile(s) Selected: "+fProcessor.getFileName());
+			
+		}
+		
+		//Display how search terms will searched for.
+		//
+		if(phraseOption == 0)
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nSearch Type: Separate");
+		}
+		
+		else 
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nSearch Type: Combined");
+		}
+		
+	}//end displaySearchParam
 	
 	public static void main(String[] args)
 	{

@@ -1,5 +1,7 @@
 package com.oop.eng;
 
+import java.text.DecimalFormat;
+
 public class TextFile{
 	
 	private String textFileName;
@@ -42,6 +44,7 @@ public class TextFile{
 	}
 	
 	public void setMatchPercentage(float matchPercentage) {
+		matchPercentage = Math.round(matchPercentage);
 		this.matchPercentage = matchPercentage;
 	}
 

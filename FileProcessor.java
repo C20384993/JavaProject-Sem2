@@ -33,7 +33,7 @@ public class FileProcessor{
 	//
 	//compareString: Read the file and compare the passed string to the text inside it.
 	//Check that a file was passed and a string was passed.
-	//There are 2 paths for the method:
+	//There are 2 courses for the method:
 	//1.) If the user enters a specific file to search through, the method will search only that file for the 
 	//search terms.
 	//2.) If no filenames are entered, then all files will be searched for the search term(s).
@@ -81,7 +81,7 @@ public class FileProcessor{
 		}
 		
 		
-		//Count how many time the search term(s) was matched. Integer Object used so it can be put into the list of lists.
+		//Count how many time the search term(s) was matched. Integer Object used so it can be put into the array list.
 		Integer numOfMatches = 0;
 		
 		//Count how many words are in the file. Increments by the number of words found on the current line.
@@ -152,21 +152,44 @@ public class FileProcessor{
 						System.out.println("word["+y+"] = "+separatedWords[y]);
 						//Determine how the search terms will be compared.
 						//0: Separately, increase numOfMatches every time one of any of the words in the array match.
-						if(separateOrCombined == 0)
+						if(separateOrCombined == 0 || separateOrCombined == 2)
 						{
 							System.out.println("separate");
 							//If current line has any words matching the searchTerms.
 							//Check the current word against every term in the searchTerms array.
 							for(i=0;i<searchTerms.length;i++)
-							{
-								if((separatedWords[y]).equals(searchTerms[i]))
+							{	
+								//No case matching
+								if(separateOrCombined == 0)
 								{
-									//Debug line
-									System.out.println("Search term matched.");
+									//Get current word as lower case and check if it equals the current searchTerm also lowercase.
+									//E.g. Day, day, DAY, how user entered it.
+									//
+									System.out.println("lowerCase = "+separatedWords[y].toLowerCase());
+									
+									if((separatedWords[y]).equals(searchTerms[i]) || separatedWords[y].toLowerCase().equals(searchTerms[i].toLowerCase()))
+									{
+										//Debug line
+										System.out.println("Search term matched.");
 						
-									//Increase matched by 1.
-									numOfMatches++;
+										//Increase matched by 1.
+										numOfMatches++;
+									}//end if
+									
 								}//end if
+								
+								//If case matching is selected.
+								else if(separateOrCombined == 2)
+								{
+									if((separatedWords[y]).equals(searchTerms[i]))
+									{
+										//Debug line
+										System.out.println("Search term matched.");
+						
+										//Increase matched by 1.
+										numOfMatches++;
+									}//end if
+								}//end else
 								
 							}//end for
 							
@@ -176,18 +199,20 @@ public class FileProcessor{
 						
 						//1: Combined, increase NumOfMatches when the same number of words on the line
 						//match up with the array of search terms order.
-						else if(separateOrCombined == 1)
+						else if(separateOrCombined == 1 || separateOrCombined == 3)
 						{
 							System.out.println("combined");
 							System.out.println("y = "+y);
 							
-							//Only do if there are enough words left in the line to equal the same amount of words in searchTerms.
-							if(separatedWords.length-y > searchTerms.length-1)
+							//With case matching.	
+							if(separateOrCombined == 3)
 							{
-								//System.out.println("Inside new if also length"+(separatedWords.length)+" y="+y+" searchTerms l= "+searchTerms.length);
+								//Only do if there are enough words left in the line to equal the same amount of words in searchTerms.
+								if(separatedWords.length-y > searchTerms.length-1)
+								{
 								
 									//Read consecutive words from the line equal to the length of the searchTerms array.
-									//Set first word to that of separatedWords, then add on words from separatedWords until
+									//Set first word to that of separatedWords[y], then add on words from separatedWords until
 									//fileLine has the same number of words as the searchTerms array.
 									String fileLine = separatedWords[y];
 									for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
@@ -206,8 +231,41 @@ public class FileProcessor{
 										//Increase matched by 1.
 										numOfMatches++;
 									}//end if
+									
+								}//end if
 								
 							}//end if
+							
+							//No case matching
+							else if(separateOrCombined == 1)
+							{
+								//Only do if there are enough words left in the line to equal the same amount of words in searchTerms.
+								if(separatedWords.length-y > searchTerms.length-1)
+								{
+								
+									//Read consecutive words from the line equal to the length of the searchTerms array.
+									//Set first word to that of separatedWords[y], then add on words from separatedWords until
+									//fileLine has the same number of words as the searchTerms array.
+									String fileLine = separatedWords[y];
+									for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
+									{
+										fileLine = fileLine+" "+separatedWords[y+nextWords]; //Current string + space + next word
+									}//end for
+								
+									System.out.println("combined file line = "+fileLine);
+								
+									//If the current consecutive words from the file match the searchTerms.
+									if((fileLine).equals(searchTermsLine) || fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()))
+									{
+										//Debug line
+										System.out.println("Search term matched.");
+						
+										//Increase matched by 1.
+										numOfMatches++;
+									}//end if
+									
+								}//end if
+							}//end else if
 							y++;
 							
 							
@@ -336,25 +394,53 @@ public class FileProcessor{
 						while(y<separatedWords.length)
 						{
 							//Separate
-							if(separateOrCombined == 0)
+							if(separateOrCombined == 0 || separateOrCombined == 2)
 							{
-								for(int v=0;v<searchTerms.length;v++)
+								//If case matching is selected.
+								if(separateOrCombined == 2)
 								{
-									//DEBUG
-									//System.out.println("word["+y+"] = "+separatedWords[y]);
-									//If current line has any words matching the searchTerms.
-									if((separatedWords[y]).equals(searchTerms[v]))
+									for(int v=0;v<searchTerms.length;v++)
 									{
-										//Debug line
-										System.out.println("Search term matched. separatedWords ["+y+"] = "+separatedWords[y]);
-										System.out.println("searchTerms["+v+"] = "+searchTerms[v]);
-							
-										//Increase matched by 1.
-										numOfMatches++;
+										//DEBUG
+										//System.out.println("word["+y+"] = "+separatedWords[y]);
+										//If current line has any words matching the searchTerms.
+										if((separatedWords[y]).equals(searchTerms[v]))
+										{
+											//Debug line
+											System.out.println("Search term matched. separatedWords ["+y+"] = "+separatedWords[y]);
+											System.out.println("searchTerms["+v+"] = "+searchTerms[v]);
+								
+											//Increase matched by 1.
+											numOfMatches++;
+											
+										}//end if
 										
-									}//end if
+									}//end for
+								}
+								
+								//No case matching
+								else if(separateOrCombined == 0)
+								{
+									for(int v=0;v<searchTerms.length;v++)
+									{
+										//DEBUG
+										//System.out.println("word["+y+"] = "+separatedWords[y]);
+										//If current line has any words matching the searchTerms.
+										
+										//If the current word in lower case equals the current search term in lower case.
+										if((separatedWords[y]).equals(searchTerms[v]) || separatedWords[y].toLowerCase().equals(searchTerms[v].toLowerCase()))
+										{
+											//Debug line
+											System.out.println("Search term matched. separatedWords ["+y+"] = "+separatedWords[y]);
+											System.out.println("searchTerms["+v+"] = "+searchTerms[v]);
+							
+											//Increase matched by 1.
+											numOfMatches++;
+										
+										}//end if
 									
-								}//end for
+									}//end for
+								}
 							
 								y++;
 								
@@ -362,29 +448,60 @@ public class FileProcessor{
 							
 							//For exact phrase matches.
 							//
-							else if(separateOrCombined == 1)
+							else if(separateOrCombined == 1 || separateOrCombined == 3)
 							{
-								if(separatedWords.length-y > searchTerms.length-1)
+								//With case matching
+								if(separateOrCombined == 3)
 								{
-									//fileLine stores the current word + words after it as one string equal in length to the combined search
-									//terms.
-									String fileLine = separatedWords[y];
-									
-									for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
+									if(separatedWords.length-y > searchTerms.length-1)
 									{
-										fileLine = fileLine+" "+separatedWords[y+nextWords];
-									}//end for
+										//fileLine stores the current word + words after it as one string equal in length to the combined search
+										//terms.
+										String fileLine = separatedWords[y];
 									
-									System.out.println("combined file line = "+fileLine);
+										for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
+										{
+											fileLine = fileLine+" "+separatedWords[y+nextWords];
+										}//end for
 									
-									if((fileLine.equals(searchTermsLine)))
-									{
-										System.out.println("Search terms matched.");
+										System.out.println("combined file line = "+fileLine);
+									
+										if((fileLine.equals(searchTermsLine)))
+										{
+											System.out.println("Search terms matched.");
 										
-										numOfMatches++;
-									}//end if
+											numOfMatches++;
+										}//end if
 									
+									}//end if
+								
 								}//end if
+								
+								//No case matching
+								else if(separateOrCombined == 1)
+								{
+									if(separatedWords.length-y > searchTerms.length-1)
+									{
+										//fileLine stores the current word + words after it as one string equal in length to the combined search
+										//terms.
+										String fileLine = separatedWords[y];
+									
+										for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
+										{
+											fileLine = fileLine+" "+separatedWords[y+nextWords];
+										}//end for
+									
+										System.out.println("combined file line = "+fileLine);
+									
+										if(fileLine.equals(searchTermsLine) || fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()))
+										{
+											System.out.println("Search terms matched.");
+										
+											numOfMatches++;
+										}//end if
+									
+									}//end if
+								}//end else if
 								y++;
 								
 							}//else if
@@ -434,7 +551,15 @@ public class FileProcessor{
 			{
 				public int compare(TextFile textfile1, TextFile textfile2)
 				{
-					return Integer.valueOf(textfile2.getSearchMatches()).compareTo(textfile1.getSearchMatches());
+					if(textfile1.getSearchMatches() != textfile2.getSearchMatches())
+					{
+						return Integer.valueOf(textfile2.getSearchMatches()).compareTo(textfile1.getSearchMatches());
+					}
+					
+					else
+					{
+						return Float.valueOf(textfile2.getMatchPercentage()).compareTo(textfile1.getMatchPercentage());
+					}
 				}
 					
 			});

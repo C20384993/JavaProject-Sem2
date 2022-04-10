@@ -38,8 +38,10 @@ public class SearchEngineGUI implements ActionListener{
 	ButtonGroup separateCombinedGroup;
 	
 	//Radio button labels.
-	JRadioButton separateRadio; //If user wants to search for files with the search terms anywhere.
-	JRadioButton combinedRadio; //If user wants to search for a specific phrase.
+	JRadioButton separateRadio; //If user wants to search for any words in the search terms.
+	JRadioButton combinedRadio; //If user wants to search for the specific combination of terms.
+	JRadioButton separateCaseMatchRadio; //If user wants to search for any words in the search terms, with case matching.
+	JRadioButton combinedCaseMatchRadio; //If user wants to search for a specific combination of the search terms, with case matching.
 	
 	//Button labels.
 	JButton searchButton;
@@ -121,12 +123,16 @@ public class SearchEngineGUI implements ActionListener{
 		//Create radio buttons.
 		separateRadio = new JRadioButton();
 		combinedRadio = new JRadioButton();
+		separateCaseMatchRadio = new JRadioButton();
+		combinedCaseMatchRadio = new JRadioButton();
 		//Create resultsArea scroll.
 		resultsScroll = new JScrollPane(resultsArea);
 		resultsScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
 		
 		separateRadio.setText("Separate");
 		combinedRadio.setText("Combined");
+		separateCaseMatchRadio.setText("Separate (Case Matching)");
+		combinedCaseMatchRadio.setText("Combined (Case Matching)");
 		searchOptions = new JTextArea(10,20);
 		
 		
@@ -142,6 +148,8 @@ public class SearchEngineGUI implements ActionListener{
 		paramPanel.add(searchOptions);
 		paramPanel.add(separateRadio);
 		paramPanel.add(combinedRadio);
+		paramPanel.add(separateCaseMatchRadio);
+		paramPanel.add(combinedCaseMatchRadio);
 		searchBtnPanel.add(searchField);
 		searchBtnPanel.add(textfileField);
 		searchBtnPanel.add(searchButton);
@@ -149,6 +157,8 @@ public class SearchEngineGUI implements ActionListener{
 		//Add radio buttons to button group.
 		separateCombinedGroup.add(separateRadio);
 		separateCombinedGroup.add(combinedRadio);
+		separateCombinedGroup.add(separateCaseMatchRadio);
+		separateCombinedGroup.add(combinedCaseMatchRadio);
 		
 		//Add paramPanel and searchBtnPanel to topPanel.
 		topPanel.add(paramPanel);
@@ -244,7 +254,7 @@ public class SearchEngineGUI implements ActionListener{
 							
 							resultsArea.append("\nSearch term(s) as a percentage of file words: "+resultsArrayList.get(resultsArrayIter).getMatchPercentage()+"%");
 							
-							resultsArea.append("\n------------------------------------------------");
+							resultsArea.append("\n---------------------------------------------------------------------");
 							resultsArea.append("\n");
 							resultsArea.append("\n");
 							
@@ -344,6 +354,32 @@ public class SearchEngineGUI implements ActionListener{
 		});
 		
 		
+		//Listener function to store combined or separate option selection.
+		separateCaseMatchRadio.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					//Set to 1 for combined word searching.
+					phraseOption = 2;
+					displaySearchParam(fProcessor);
+			}
+		});
+		
+		
+		//Listener function to store combined or separate option selection.
+		combinedCaseMatchRadio.addActionListener(new ActionListener()
+		{
+			@Override
+			public void actionPerformed(ActionEvent e) 
+			{
+					//Set to 1 for combined word searching.
+					phraseOption = 3;
+					displaySearchParam(fProcessor);
+			}
+		});
+		
+		
 		
 		
 		//After clicking search button, If a correct filename is chosen && the search term is entered.
@@ -385,10 +421,22 @@ public class SearchEngineGUI implements ActionListener{
 			searchOptions.append("\nSearch Type: Separate");
 		}
 		
-		else 
+		else if(phraseOption == 1)
 		{
 			searchOptions.append("\n");
 			searchOptions.append("\nSearch Type: Combined");
+		}
+		
+		else if(phraseOption == 2)
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nSearch Type: Separate (Case Matching)");
+		}
+		
+		else if(phraseOption == 3)
+		{
+			searchOptions.append("\n");
+			searchOptions.append("\nSearch Type: Combined (Case Matching)");
 		}
 		
 	}//end displaySearchParam

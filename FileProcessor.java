@@ -13,6 +13,7 @@ import java.util.Comparator;
 
 import static java.util.stream.Collectors.*;
 
+@SuppressWarnings("unused")
 public class FileProcessor{
 	
 	//Attributes
@@ -30,19 +31,44 @@ public class FileProcessor{
 	}
 	
 	//Methods
-	//
-	//compareString: Read the file and compare the passed string to the text inside it.
-	//Check that a file was passed and a string was passed.
-	//There are 2 courses for the method:
-	//1.) If the user enters a specific file to search through, the method will search only that file for the 
-	//search terms.
-	//2.) If no filenames are entered, then all files will be searched for the search term(s).
-	//
-	//Returns an ArrayList.
-	//
-	//Buffered Reader code: https://www.guru99.com/buffered-reader-in-java.html
-	//0: separate
-	//1: combined
+	/*
+	compareString: Read the file and compare the passed string to the text inside it.
+	The files to be read are stored in the TextFiles folder. The path should look like this:
+	"C:\\Users\\YourUserNameHere\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles"
+	
+	Return type: ArrayList <TextFile> : This is a list of all files that contained at least 1 search term match.
+	The sorted array list will be returned to SearchEngineGUI and be displayed there in the searchButton ActionListener.
+	
+	Parameters: 
+	String passedFileName, this is the filename the user entered. If no file was entered or the file couldn't be 
+	found, it will be set to "". An if statement check will determine this.
+	
+	String[] searchTerms, The search terms entered by the user. They are stored in an array, with each word having its own
+	index position.
+	
+	int separateOrcombined, Determines how the search will be performed. 
+	0: separate (default setting)
+	1: combined
+	2: separate (case matching)
+	3: combined (case matching)
+	
+	There are 4 courses for this method:
+	1.) If the user enters a specific file to search through, the method will search only that file for the 
+	search terms.
+	1.i) Separate Search
+	1.ii) Combined Search
+	1.iii) Separate Search (Case Matching)
+	1.iv) Combined Search (Case Matching)
+	
+	2.) If no filenames are entered, then all files will be searched for the search term(s).
+	2.i) Separate Search
+	2.ii) Combined Search
+	2.iii) Separate Search (Case Matching)
+	2.iv) Combined Search (Case Matching)
+	
+	Buffered Reader code: https://www.guru99.com/buffered-reader-in-java.html
+	
+	*/
 	public ArrayList<TextFile> compareString(String passedFileName, String[] searchTerms, int separateOrCombined)
 	{
 		//Read the names of the text files that are in the TextFiles folder.
@@ -51,13 +77,17 @@ public class FileProcessor{
 		File[] resources = Textfiles.listFiles();
 		
 		//fileResults ArrayList will store a TextFile.java object for each file read/a single file.
-		//
 		ArrayList<TextFile> fileResults = new ArrayList<TextFile>();
 		
 		//Variables
-		//
-		String selectedFile = ""; //Store the file name string that was selected and found in the project folder.
-		boolean fileFound = false; //Used in if statement to check if passedFileName was found/did match.
+		
+		//Used in if statement to check if passedFileName was found/did match.
+		boolean fileFound = false; 
+		//Count how many time the search term(s) was matched. Integer Object used so it can be put into the array list.
+		Integer numOfMatches = 0;
+		//Count how many words are in the file. Increments by the number of words found on the current line.
+		//Used for calculating matchPercentage.
+		int wordCount = 0;
 
 		
 		//Go through the project folder to try and find the file name entered.
@@ -66,46 +96,28 @@ public class FileProcessor{
 			//Check it's a file and not a directory.
 		    if (file.isFile())
 		    {
-		    	//Debug
-		        System.out.println(file.getName());
-		        System.out.println(file.exists());
 		        
 		        //Set selectedFile as the found filename and fileFound to true. 
 		        //These will be used in option 1 of the if/if else statement.
 		        if(passedFileName.equals(file.getName()) == true)
 		        {
-		        	selectedFile = passedFileName;
 		        	fileFound = true;
 		        }//end if
 		    }
 		}
 		
 		
-		//Count how many time the search term(s) was matched. Integer Object used so it can be put into the array list.
-		Integer numOfMatches = 0;
-		
-		//Count how many words are in the file. Increments by the number of words found on the current line.
-		int wordCount = 0;
-		
-		
-		
-		//Debug line
-		System.out.println(searchTerms);
-		
 		
 		//1.) Specific filename && search term, i.e. search through given file.
 		//Only if the user has specified a file to search, a search term to search for, and the specified file was found.
 		if(passedFileName != null && searchTerms != null && fileFound == true)
 		{
-			//Debug line
-			System.out.println("Inside if");
 			File userFile = new File(fileName); //Open the selected file.
 			String currentLine = ""; //Stores current line of text from file.
+
 			
-			System.out.println("userFile = "+userFile);
-			
-			int i = 0; //Integer for looping through the array.
-			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
+			int currentSearchTerm = 0; //Integer for looping through the array.
+			int currentWord = 0; //Used in the second while loop to go through the array of words from the current line. 
 			
 			//Create a bufferedReader to read the file.
 			//
@@ -119,13 +131,13 @@ public class FileProcessor{
 			
 			//Store the search terms as a single consecutive string for the else if if(combinedOrSeparated == 1).
 			String searchTermsLine = searchTerms[0];
+			
 			for(int searchLineLoop = 1;searchLineLoop < searchTerms.length;searchLineLoop++)
 			{
 				searchTermsLine = searchTermsLine+" "+searchTerms[searchLineLoop]; //Current string + space + next word in searchTerms.
 			}//end for
 			
-			System.out.println("combined searchTerms = "+searchTermsLine);
-			int nextWords = 0;
+			int nextWords = 0; //Looping variable.
 			
 			//Read through the file.
 			//
@@ -135,9 +147,8 @@ public class FileProcessor{
 					//Read the current line, split it into an array that contains each word, loop through array
 					//and check if searchTerm matches.
 					
-					//Debug Line
-					y=0;
-					System.out.println("Inside while");
+					//Reset currentWord to 0 for the new line.
+					currentWord=0;
 					
 					//Split currentLine into an array that contains each word.
 					String[] separatedWords = currentLine.split(" ");
@@ -147,53 +158,53 @@ public class FileProcessor{
 					
 					
 					//Get the length of the array(number of words on the current line) and loop through it.
-					while(y<separatedWords.length)
+					while(currentWord<separatedWords.length)
 					{
-						System.out.println("word["+y+"] = "+separatedWords[y]);
 						//Determine how the search terms will be compared.
 						//0: Separately, increase numOfMatches every time one of any of the words in the array match.
 						if(separateOrCombined == 0 || separateOrCombined == 2)
 						{
-							System.out.println("separate");
 							//If current line has any words matching the searchTerms.
 							//Check the current word against every term in the searchTerms array.
-							for(i=0;i<searchTerms.length;i++)
+							for(currentSearchTerm=0;currentSearchTerm<searchTerms.length;currentSearchTerm++)
 							{	
-								//No case matching
+								//1.i) No case matching
 								if(separateOrCombined == 0)
 								{
 									//Get current word as lower case and check if it equals the current searchTerm also lowercase.
-									//E.g. Day, day, DAY, how user entered it.
+									//E.g. Day, day, DAY, how user entered it. Also check for common sentence endings 
+									//e.g. commas, full stops, question marks.
 									//
-									System.out.println("lowerCase = "+separatedWords[y].toLowerCase());
-									
-									if((separatedWords[y]).equals(searchTerms[i]) || separatedWords[y].toLowerCase().equals(searchTerms[i].toLowerCase()))
+									if((separatedWords[currentWord]).equals(searchTerms[currentSearchTerm]) || 
+											separatedWords[currentWord].toLowerCase().equals(searchTerms[currentSearchTerm].toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchTerm]+",").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchTerm]+".").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchTerm]+"?").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchTerm]+"!").toLowerCase()))
 									{
-										//Debug line
-										System.out.println("Search term matched.");
 						
 										//Increase matched by 1.
 										numOfMatches++;
+										
 									}//end if
 									
 								}//end if
 								
-								//If case matching is selected.
+								//1.iii) If separate case matching is selected.
 								else if(separateOrCombined == 2)
 								{
-									if((separatedWords[y]).equals(searchTerms[i]))
-									{
-										//Debug line
-										System.out.println("Search term matched.");
-						
+									if((separatedWords[currentWord]).equals(searchTerms[currentSearchTerm]))
+									{						
 										//Increase matched by 1.
 										numOfMatches++;
 									}//end if
+									
 								}//end else
 								
 							}//end for
 							
-							y++;
+							currentWord++;
+							
 						}//end if
 						
 						
@@ -201,78 +212,77 @@ public class FileProcessor{
 						//match up with the array of search terms order.
 						else if(separateOrCombined == 1 || separateOrCombined == 3)
 						{
-							System.out.println("combined");
-							System.out.println("y = "+y);
 							
-							//With case matching.	
+							//1. iv) With case matching.	
 							if(separateOrCombined == 3)
 							{
 								//Only do if there are enough words left in the line to equal the same amount of words in searchTerms.
-								if(separatedWords.length-y > searchTerms.length-1)
+								if(separatedWords.length-currentWord > searchTerms.length-1)
 								{
 								
 									//Read consecutive words from the line equal to the length of the searchTerms array.
-									//Set first word to that of separatedWords[y], then add on words from separatedWords until
+									//Set first word to that of separatedWords[currentWord], then add on words from separatedWords until
 									//fileLine has the same number of words as the searchTerms array.
-									String fileLine = separatedWords[y];
+									String fileLine = separatedWords[currentWord];
 									for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
 									{
-										fileLine = fileLine+" "+separatedWords[y+nextWords]; //Current string + space + next word
+										fileLine = fileLine+" "+separatedWords[currentWord+nextWords]; //Current string + space + next word
 									}//end for
-								
-									System.out.println("combined file line = "+fileLine);
+
 								
 									//If the current consecutive words from the file match the searchTerms.
 									if((fileLine).equals(searchTermsLine))
 									{
-										//Debug line
-										System.out.println("Search term matched.");
-						
 										//Increase matched by 1.
 										numOfMatches++;
+										
 									}//end if
 									
 								}//end if
 								
 							}//end if
 							
-							//No case matching
+							//1.ii) No case matching
 							else if(separateOrCombined == 1)
 							{
 								//Only do if there are enough words left in the line to equal the same amount of words in searchTerms.
-								if(separatedWords.length-y > searchTerms.length-1)
+								if(separatedWords.length-currentWord > searchTerms.length-1)
 								{
 								
 									//Read consecutive words from the line equal to the length of the searchTerms array.
-									//Set first word to that of separatedWords[y], then add on words from separatedWords until
+									//Set first word to that of separatedWords[currentWord], then add on words from separatedWords until
 									//fileLine has the same number of words as the searchTerms array.
-									String fileLine = separatedWords[y];
+									String fileLine = separatedWords[currentWord];
 									for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
 									{
-										fileLine = fileLine+" "+separatedWords[y+nextWords]; //Current string + space + next word
+										fileLine = fileLine+" "+separatedWords[currentWord+nextWords]; //Current string + space + next word
 									}//end for
-								
-									System.out.println("combined file line = "+fileLine);
+
 								
 									//If the current consecutive words from the file match the searchTerms.
-									if((fileLine).equals(searchTermsLine) || fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()))
+									if((fileLine).equals(searchTermsLine) ||
+											fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+",").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+".").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+"?").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+"!").toLowerCase())
+											)
 									{
-										//Debug line
-										System.out.println("Search term matched.");
 						
 										//Increase matched by 1.
 										numOfMatches++;
+										
 									}//end if
 									
 								}//end if
+								
 							}//end else if
-							y++;
+							
+							currentWord++;
 							
 							
 						}//end else if
 						
-						//Increment i.
-						//i++;
 					}//end while
 						
 				}
@@ -281,10 +291,6 @@ public class FileProcessor{
 				e.printStackTrace();
 			}
 			
-			System.out.println("numOfMatches = "+numOfMatches);
-			System.out.println("wordCount = "+wordCount);
-			//System.out.println();
-			System.out.println("Percentage = "+((float)numOfMatches/wordCount)*100);
 			
 			//Selected only 1 file to search, so add this file and its numOfMatches to fileResults, a new TextFile object.
 			//But only if it contains at least 1 search term match.
@@ -292,8 +298,6 @@ public class FileProcessor{
 			{
 				fileResults.add(new TextFile(passedFileName,numOfMatches,((float)numOfMatches/wordCount)*100));
 			}
-			
-			System.out.println(numOfMatches);
 			
 			return fileResults;
 			
@@ -307,14 +311,13 @@ public class FileProcessor{
 		//Find file names in folder.
 		//https://stackoverflow.com/questions/52369327/how-to-read-data-from-all-files-one-by-one-in-a-folder-with-java
 		//
-		//If the passedFileName is set to "empty", the user either wants to search all files or the file they want to search isn't there.
-		else if(passedFileName.equals("empty") && searchTerms != null)
+		//If the passedFileName is set to "", the user either wants to search all files or the file they want to search isn't there.
+		else if(passedFileName.equals("") && searchTerms != null)
 		{
-			System.out.println("2.) No specific filename && have search term");
 			
 			
 			String currentLine = ""; //Stores current line of text from file.
-			int y = 0; //Used in the second while loop to go through the array of words from the current line. 
+			int currentWord = 0; //Used in the second while loop to go through the array of words from the current line. 
 			
 			
 			//ArrayList to store each file name.
@@ -332,34 +335,23 @@ public class FileProcessor{
 				searchTermsLine = searchTermsLine+" "+searchTerms[searchLineLoop]; //Current string + space + next word in searchTerms.
 			}//end for
 			
-			System.out.println("combined searchTerms = "+searchTermsLine);
 
 			//Fill textFileName with each text file name in the project folder.
 			for (File file : resources)
 			{
 			    if (file.isFile())
 			    {
-			    	//Debug
-			        System.out.println(file.getName());
 			        //Add the file name to the array.
 			        textFileName.add(file.getName());
 			    }
-			}
-			
-			//DEBUG
-			System.out.println("Print textFileName");
-			for(int v = 0; v < textFileName.size(); v++) {   
-			    System.out.print(textFileName.get(v));
-			} 
+			}//end for
 			
 	        
 			//For each file read through it and perform the same code as in the 
 			//original if statement to check for matching terms.
-			for(int i = 0;i<textFileName.size();i++)
+			for(int currentSearchTerm = 0;currentSearchTerm<textFileName.size();currentSearchTerm++)
 			{
-				File userFile = new File(textFileName.get(i)); //Open file.
-				
-				System.out.println("\nNow on file: "+textFileName.get(i));
+				File userFile = new File(textFileName.get(currentSearchTerm)); //Open file.
 				
 				//Create bufferedreader object.
 				BufferedReader myBufferReader = null;
@@ -379,9 +371,8 @@ public class FileProcessor{
 						//Read the current line, split it into an array that contains each word, loop through array
 						//and check if searchTerm matches.
 						
-						//Debug Line
-						y=0;
-						System.out.println("Inside while");
+						//Reset currentWord for the reading of the new file.
+						currentWord=0;
 						
 						//Split currentLine into an array that contains each word.
 						String[] separatedWords = currentLine.split(" ");
@@ -391,25 +382,19 @@ public class FileProcessor{
 						
 						
 						//Get the length of the array(current line) and loop through it.
-						while(y<separatedWords.length)
+						while(currentWord<separatedWords.length)
 						{
 							//Separate
 							if(separateOrCombined == 0 || separateOrCombined == 2)
 							{
-								//If case matching is selected.
+								//2.iii) Separate case matching is selected.
 								if(separateOrCombined == 2)
 								{
-									for(int v=0;v<searchTerms.length;v++)
+									for(int currentSearchIndex=0;currentSearchIndex<searchTerms.length;currentSearchIndex++)
 									{
-										//DEBUG
-										//System.out.println("word["+y+"] = "+separatedWords[y]);
 										//If current line has any words matching the searchTerms.
-										if((separatedWords[y]).equals(searchTerms[v]))
-										{
-											//Debug line
-											System.out.println("Search term matched. separatedWords ["+y+"] = "+separatedWords[y]);
-											System.out.println("searchTerms["+v+"] = "+searchTerms[v]);
-								
+										if((separatedWords[currentWord]).equals(searchTerms[currentSearchIndex]))
+										{								
 											//Increase matched by 1.
 											numOfMatches++;
 											
@@ -421,19 +406,18 @@ public class FileProcessor{
 								//No case matching
 								else if(separateOrCombined == 0)
 								{
-									for(int v=0;v<searchTerms.length;v++)
+									for(int currentSearchIndex=0;currentSearchIndex<searchTerms.length;currentSearchIndex++)
 									{
-										//DEBUG
-										//System.out.println("word["+y+"] = "+separatedWords[y]);
 										//If current line has any words matching the searchTerms.
 										
 										//If the current word in lower case equals the current search term in lower case.
-										if((separatedWords[y]).equals(searchTerms[v]) || separatedWords[y].toLowerCase().equals(searchTerms[v].toLowerCase()))
-										{
-											//Debug line
-											System.out.println("Search term matched. separatedWords ["+y+"] = "+separatedWords[y]);
-											System.out.println("searchTerms["+v+"] = "+searchTerms[v]);
-							
+										if((separatedWords[currentWord]).equals(searchTerms[currentSearchIndex]) || 
+											separatedWords[currentWord].toLowerCase().equals(searchTerms[currentSearchIndex].toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchIndex]+",").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchIndex]+".").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchIndex]+"?").toLowerCase()) ||
+											separatedWords[currentWord].toLowerCase().equals((searchTerms[currentSearchIndex]+"!").toLowerCase()))
+										{							
 											//Increase matched by 1.
 											numOfMatches++;
 										
@@ -442,7 +426,7 @@ public class FileProcessor{
 									}//end for
 								}
 							
-								y++;
+								currentWord++;
 								
 							}//end if
 							
@@ -450,26 +434,23 @@ public class FileProcessor{
 							//
 							else if(separateOrCombined == 1 || separateOrCombined == 3)
 							{
-								//With case matching
+								//2.iv) Combined case matching
 								if(separateOrCombined == 3)
 								{
-									if(separatedWords.length-y > searchTerms.length-1)
+									if(separatedWords.length-currentWord > searchTerms.length-1)
 									{
 										//fileLine stores the current word + words after it as one string equal in length to the combined search
 										//terms.
-										String fileLine = separatedWords[y];
+										String fileLine = separatedWords[currentWord];
 									
 										for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
 										{
-											fileLine = fileLine+" "+separatedWords[y+nextWords];
+											fileLine = fileLine+" "+separatedWords[currentWord+nextWords];
 										}//end for
-									
-										System.out.println("combined file line = "+fileLine);
+
 									
 										if((fileLine.equals(searchTermsLine)))
 										{
-											System.out.println("Search terms matched.");
-										
 											numOfMatches++;
 										}//end if
 									
@@ -477,38 +458,43 @@ public class FileProcessor{
 								
 								}//end if
 								
-								//No case matching
+								//2.ii) Combined case matching
 								else if(separateOrCombined == 1)
 								{
-									if(separatedWords.length-y > searchTerms.length-1)
+									if(separatedWords.length-currentWord > searchTerms.length-1)
 									{
 										//fileLine stores the current word + words after it as one string equal in length to the combined search
 										//terms.
-										String fileLine = separatedWords[y];
+										String fileLine = separatedWords[currentWord];
 									
 										for(nextWords = 1;nextWords < searchTerms.length;nextWords++)
 										{
-											fileLine = fileLine+" "+separatedWords[y+nextWords];
+											fileLine = fileLine+" "+separatedWords[currentWord+nextWords];
 										}//end for
 									
-										System.out.println("combined file line = "+fileLine);
-									
-										if(fileLine.equals(searchTermsLine) || fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()))
+										if(fileLine.equals(searchTermsLine) || 
+											fileLine.toLowerCase().equals(searchTermsLine.toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+",").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+".").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+"?").toLowerCase()) ||
+											fileLine.toLowerCase().equals((searchTermsLine+"!").toLowerCase()))
 										{
-											System.out.println("Search terms matched.");
-										
 											numOfMatches++;
 										}//end if
 									
 									}//end if
+									
 								}//end else if
-								y++;
+								
+								//Move to next word.
+								currentWord++;
 								
 							}//else if
 								
 						}//end while
 							
 					}//end while
+					
 					//End of file
 					
 					}//end try
@@ -520,32 +506,26 @@ public class FileProcessor{
 				}
 				
 				
-				//After the file has been searched, create an TextFile object of the file and store it in fileResults.
+				//After the file has been searched, create a TextFile object of the file and store it in fileResults.
 				//the fileResults Arraylists. 
-				//https://stackoverflow.com/questions/14767697/dynamically-creating-arraylist-inside-a-loop
-				//TextFile tf1 = new TextFile(textFileName.get(i),numOfMatches1);
-				//System.out.println("numOfmATCHES");
-				System.out.println("Percentage = "+((float)numOfMatches/wordCount)*100);
-				System.out.println("NumOfMatches = "+numOfMatches);
 				
 				//Only add the file to the list if it contains at least 1 search term match.
 				if(numOfMatches > 0)
 				{
-					fileResults.add(new TextFile(textFileName.get(i),numOfMatches,((float)numOfMatches/wordCount)*100));
+					fileResults.add(new TextFile(textFileName.get(currentSearchTerm),numOfMatches,((float)numOfMatches/wordCount)*100));
 				}
 				
-				//Reset numOfMatches for the next file.
+				//Reset variables for the next file.
 				numOfMatches = 0; 
-				y = 0;
+				currentWord = 0;
 				wordCount = 0;
-				System.out.println("Next file ***********");
 				
 			}//end for
 				
-			//After each file is read and the fileMatchesArray array has been filled, display the results back to 
+			//After each file is read and the fileMatchesArray array has been filled, sort and display the results back to 
 			//the GUI.
-			
 
+			//Sorting an ArrayList
 			//https://www.youtube.com/watch?v=wzWFQTLn8hI
 			Collections.sort(fileResults, new Comparator<TextFile>()
 			{
@@ -563,8 +543,6 @@ public class FileProcessor{
 				}
 					
 			});
-			
-			//System.out.println("top match = "+fileResults.get(0).getTextFileName());
 			
 			return fileResults;
 			
@@ -590,20 +568,14 @@ public class FileProcessor{
 		File Textfiles = new File("C:\\Users\\C20384993\\eclipse-workspace\\OOP-CA-C20384993\\TextFiles");
 		File[] resources = Textfiles.listFiles();
 		
-		String selectedFile = "";
-		
 		//Go through the project folder to try and find the file name entered.
 		for (File file : resources)
 		{
 		    if (file.isFile())
-		    {
-		    	//Debug
-		        System.out.println("Each file: "+file.getName());
-		        
+		    {   
 		        //Set selectedFile as the found filename.
 		        if(passedFileName.equals(file.getName()) == true)
 		        {
-		        	System.out.println("file");
 		        	this.fileName = passedFileName;
 		        	return true;
 		        }//end if
@@ -612,7 +584,7 @@ public class FileProcessor{
 		        //Return false.
 		        else
 		        {
-		        	this.fileName = "empty";
+		        	this.fileName = "";
 		        }
 		    }
 		}
@@ -623,6 +595,7 @@ public class FileProcessor{
 
 	
 	public String[] getSearchText() {
+		//Must return a copyOf for arrays.
 		return Arrays.copyOf(searchText, searchText.length);
 	}
 

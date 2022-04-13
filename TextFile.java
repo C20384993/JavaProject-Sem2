@@ -1,12 +1,12 @@
 package com.oop.eng;
 
-import java.text.DecimalFormat;
-
+//Used to store attributes about each file read.
+//
 public class TextFile{
 	
-	private String textFileName;
-	private int searchMatches;
-	private float matchPercentage;
+	private String textFileName; //The name of the file.
+	private int searchMatches; //The number of times the search term(s) were found in the file.
+	private float matchPercentage; //The percentage of words in the file that are search term(s). 
 	
 
 	//Constructor
@@ -22,7 +22,6 @@ public class TextFile{
 	//Getters and Setters
 	//
 	public String getTextFileName() {
-		//System.out.println("textFileName = "+this.textFileName);
 		return textFileName;
 	}
 
@@ -31,7 +30,6 @@ public class TextFile{
 	}
 
 	public int getSearchMatches() {
-		//System.out.println("searchMatches = "+this.searchMatches);
 		return searchMatches;
 	}
 
@@ -44,7 +42,7 @@ public class TextFile{
 	}
 	
 	public void setMatchPercentage(float matchPercentage) {
-		matchPercentage = Math.round(matchPercentage);
+		matchPercentage = Math.round(matchPercentage); //Round the percentage up to remove long decimal places.
 		this.matchPercentage = matchPercentage;
 	}
 

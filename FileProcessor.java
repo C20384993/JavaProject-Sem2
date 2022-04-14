@@ -524,9 +524,7 @@ public class FileProcessor{
 				
 			//After each file is read and the fileMatchesArray array has been filled, sort and display the results back to 
 			//the GUI.
-
-			//Sorting an ArrayList
-			//https://www.youtube.com/watch?v=wzWFQTLn8hI
+			
 			Collections.sort(fileResults, new Comparator<TextFile>()
 			{
 				public int compare(TextFile textfile1, TextFile textfile2)

@@ -309,6 +309,12 @@ public class SearchEngineGUI implements ActionListener{
 					String userInput = textfileField.getText();
 					fProcessor.setFileName(userInput);
 					displaySearchParam(fProcessor); //Update the searchOptions text area.
+					
+					//Inform the user if the file couldn't be found.
+					if(fProcessor.getFileName().equals(""))
+					{
+						JOptionPane.showMessageDialog(searchButton,"File not found, all files will be searched instead.");
+					}
 			}
 		});
 		
